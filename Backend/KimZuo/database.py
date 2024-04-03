@@ -2,7 +2,7 @@ import json
 import os
 
 current_directory = os.getcwd()
-database_directory = os.getcwd() + "\database\\test.txt"
+database_directory = os.getcwd() + "\database\\test.json"
 
 
 def database_read(file_path):

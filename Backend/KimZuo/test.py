@@ -1,24 +1,52 @@
 import json
 import os
 
-current_directory = os.getcwd()
-database_directory = os.getcwd() + "\database"
+database_directory = os.getcwd() + "\database\\farm_data.json"
 
+# Original data from data.ts
+data = [
+    {
+        "id": 0,
+        "farmName": "Farm 1",
+        "buildings": [
+            {
+                "id": 0,
+                "buildingName": "Building 1",
+                "events": [
+                    {"date": "2023-07-10", "text": "Changed light level"},
+                    {"date": "2023-07-15", "text": "Added fertilizer"}
+                ],
+                "environment": [
+                    {"date": "2023-03-12", "temperature": 22.7, "fluorescents": 7041, "co2Concentration": 754,
+                     "irrigation": 2.0},
+                    {"date": "2023-03-13", "temperature": 22.6, "fluorescents": 6992, "co2Concentration": 754,
+                     "irrigation": 2.1},
+                    # More environment data...
+                ],
+                "data": [
+                    {"date": "2023-03-12", "area": 613, "fruitlets": 0, "height": 192, "leaves": 5, "volume": 505,
+                     "width": 46},
+                    {"date": "2023-03-13", "area": 616, "fruitlets": 0, "height": 205, "leaves": 11, "volume": 495,
+                     "width": 54},
+                    # More data...
+                ],
+                "plots": [
+                    {
+                        "id": 0,
+                        "plotName": "Plot A1",
+                        # Plot A1 data...
+                    },
+                    # More plots...
+                ]
+            },
+            # More buildings...
+        ]
+    },
+    # More farms...
+]
 
-def database_read(file_path):
-    with open(file_path, 'r') as file:
-        data = json.load(file)
-    return data
+# Write data to a text file in JSON format
+with open(database_directory, "w") as outfile:
+    json.dump(data, outfile, indent=4)
 
-
-def database_write(file_path, data_write):
-    with open(file_path, 'w') as file:
-        json.dump(data_write, file)
-
-
-if __name__ == '__main__':
-    write_file_path = database_directory + "\\test.txt"
-    data_in = {"date": '2023-06-11', "temperature": '23.4', "fluorescent": '6993',
-               "co2Concentration": '781', "irrigation": '2.0'}
-    print(write_file_path)
-    database_write(write_file_path, data_in)
+print("Data successfully stored in 'farm_data.json' file.")
