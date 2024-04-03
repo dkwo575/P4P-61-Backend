@@ -1,1 +1,1 @@
-{"date": "2023-06-11", "temperature": "23.4", "fluorescent": "6993", "co2Concentration": "781", "irrigation": "2.0"}
+{"date": "2023-06-11", "temperature": "23.4", "fluorescent": "6993", "co2Concentration": "781", "irrigation": "2.0", "libai": "17"}
