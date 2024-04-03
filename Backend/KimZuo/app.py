@@ -1,8 +1,10 @@
 from flask import Flask, request
 import json
+import os
 
 app = Flask(__name__)
-
+current_directory = os.getcwd()
+database_directory = os.getcwd() + "/database"
 
 # Set GET request through methods
 @app.route('/args', methods=["GET"])
