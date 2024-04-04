@@ -127,15 +127,8 @@ def update_or_add_environment_data(data, farm_id, building_id, environment_date,
             # If building ID not found, add a new building with the environment
             new_environment = {"date": environment_date}
             new_environment.update(new_environment_data)
-            building_data = {
-                "id": building_id,
-                "buildingName": "",  # Empty building name since it's not specified
-                "events": [],
-                "environment": [new_environment],
-                "data": [],
-                "plots": []
-            }
-            building_data["environment"] = [new_environment]
+            building_data = {"id": building_id, "buildingName": "", "events": [], "environment": [new_environment],
+                             "data": [], "plots": []}
             farm["buildings"].append(building_data)
             return True
     # If farm ID not found, add a new farm with the building and environment
@@ -221,7 +214,7 @@ def update_or_add_temperature(data, farm_id, building_id, environment_date, new_
     return True
 
 
-# Function to update or add the temperature by farm ID, building ID, and environment date
+# Function to update or add the fluorescents by farm ID, building ID, and environment date
 def update_or_add_fluorescents(data, farm_id, building_id, environment_date, new_fluorescents):
     for farm in data:
         if farm["id"] == farm_id:
@@ -284,7 +277,7 @@ def update_or_add_fluorescents(data, farm_id, building_id, environment_date, new
     return True
 
 
-# Function to update or add the temperature by farm ID, building ID, and environment date
+# Function to update or add the co2Concentration by farm ID, building ID, and environment date
 def update_or_add_co2Concentration(data, farm_id, building_id, environment_date, new_co2Concentration):
     for farm in data:
         if farm["id"] == farm_id:
@@ -347,7 +340,7 @@ def update_or_add_co2Concentration(data, farm_id, building_id, environment_date,
     return True
 
 
-# Function to update or add the temperature by farm ID, building ID, and environment date
+# Function to update or add the irrigation by farm ID, building ID, and environment date
 def update_or_add_irrigation(data, farm_id, building_id, environment_date, new_irrigation):
     for farm in data:
         if farm["id"] == farm_id:
