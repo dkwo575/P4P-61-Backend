@@ -11,9 +11,9 @@ write_file_path = database_directory + "\\test.txt"
 @app.route('/args', methods=["GET", "POST"])
 def args_request():
     # Receive and process GET POST data requests
-    user_name = request.args.get('user_name')
-    user_age = request.args.get('user_age')
+    temperature_get = request.args.get('temperature')
+    fluorescents_get = request.args.get('fluorescents_get')
 
-    print("user_name = %s, user_age = %s" % (user_name, user_age))
-    newdata_join(user_name, user_age)
-    return "user_name = %s, user_age = %s" % (user_name, user_age)
+    print("temperature = %s, fluorescents = %s" % (temperature_get, fluorescents_get))
+    newdata_join(temperature_get, fluorescents_get)
+    return "temperature = %s, fluorescents = %s" % (temperature_get, fluorescents_get)
