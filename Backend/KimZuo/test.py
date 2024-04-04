@@ -50,3 +50,5 @@ with open(database_directory, "w") as outfile:
     json.dump(data, outfile, indent=4)
 
 print("Data successfully stored in 'farm_data.json' file.")
+print(type(data[0]))
+print(data[0])
