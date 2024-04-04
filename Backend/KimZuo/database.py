@@ -1,9 +1,6 @@
 import json
 import os
-from upload import *
-
-current_directory = os.getcwd()
-database_directory = os.getcwd() + "\database\\test.json"
+from upload_farm import *
 
 
 def database_read(file_path):
@@ -17,9 +14,9 @@ def database_write(file_path, data_write):
         json.dump(data_write, file)
 
 
-def newdata_join(data_key, data_value):
-    database_data = database_read(database_directory)
-    print(database_data)
-    database_data[data_key] = data_value
-    print(database_data)
-    database_write(database_directory, database_data)
+# def newdata_join(data_key, data_value):
+#     database_data = database_read(database_directory)
+#     print(database_data)
+#     database_data[data_key] = data_value
+#     print(database_data)
+#     database_write(database_directory, database_data)
