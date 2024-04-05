@@ -5,11 +5,11 @@
         "buildings": [
             {
                 "id": 0,
-                "buildingName": "New Building Name",
+                "buildingName": "Building 1",
                 "events": [
                     {
                         "date": "2023-07-10",
-                        "text": "New Event Text"
+                        "text": "Changed light level"
                     },
                     {
                         "date": "2023-07-15",
@@ -19,7 +19,7 @@
                 "environment": [
                     {
                         "date": "2023-03-12",
-                        "temperature": 25.0,
+                        "temperature": 22.7,
                         "fluorescents": 7041,
                         "co2Concentration": 754,
                         "irrigation": 2.0
@@ -60,10 +60,5 @@
                 ]
             }
         ]
-    },
-    {
-        "id": 1,
-        "farmName": "Farm 2",
-        "buildings": []
     }
 ]

@@ -405,7 +405,9 @@ def update_or_add_irrigation(data, farm_id, building_id, environment_date, new_i
 
 # Path to the database file
 database_path = os.path.join(os.getcwd(), "database", "farm_data.json")
-new_database_path = os.path.join(os.getcwd(), "database", "new_new_farm_data.json")
+# new_database_path = os.path.join(os.getcwd(), "database", "new_new_farm_data.json")
+print(database_path)
+
 
 # Load data from JSON file
 with open(database_path, "r") as infile:
@@ -437,5 +439,5 @@ else:
     print("Failed to update temperature")
 
 # Write updated data back to the JSON file
-with open(new_database_path, "w") as outfile:
+with open(database_path, "w") as outfile:
     json.dump(data, outfile, indent=4)
