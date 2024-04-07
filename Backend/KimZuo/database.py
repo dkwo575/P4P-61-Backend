@@ -1,6 +1,4 @@
 import json
-import os
-from upload_farm import *
 
 
 def database_read(file_path):

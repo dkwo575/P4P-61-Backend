@@ -404,7 +404,7 @@ def update_or_add_irrigation(data, farm_id, building_id, environment_date, new_i
 
 
 # Path to the database file
-database_path = os.path.join(os.getcwd(), "database", "farm_data.json")
+database_path = os.path.join(os.getcwd(), "../database", "farm_data.json")
 # new_database_path = os.path.join(os.getcwd(), "database", "new_new_farm_data.json")
 print(database_path)
 

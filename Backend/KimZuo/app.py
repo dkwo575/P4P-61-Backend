@@ -1,7 +1,5 @@
 from flask import Flask, request
-import os
 from database import *
-from upload_farm import *
 
 app = Flask(__name__)
 database_directory = os.getcwd() + "/database"
