@@ -35,6 +35,17 @@ data = [
                         "id": 0,
                         "plotName": "Plot A1",
                         # Plot A1 data...
+                        "data": [
+                            {
+                                "date": "2023-03-12",
+                                "area": 602,
+                                "fruitlets": 0,
+                                "height": 198,
+                                "leaves": 5,
+                                "volume": 520,
+                                "width": 50,
+                            }
+                        ]
                     },
                     # More plots...
                 ]
