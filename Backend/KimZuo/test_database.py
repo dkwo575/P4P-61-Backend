@@ -1,7 +1,7 @@
 import json
 import os
 
-database_directory = os.getcwd() + "\database\\farm_data.json"
+database_directory = database_directory = os.path.join(os.getcwd(), "database", "farm_data.json")
 
 # Original data from data.ts
 data = [

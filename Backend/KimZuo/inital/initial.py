@@ -1,8 +1,8 @@
 import json
 import os
 
-def inital_farm(database_directory):
 
+def inital_farm(database_directory):
     # Database structure from data.ts (Frontend)
     data = [
         {
