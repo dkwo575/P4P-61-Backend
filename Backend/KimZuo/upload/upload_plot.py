@@ -101,7 +101,7 @@ def update_or_add_plotArea(data, farm_id, building_id, plot_id, plot_date, new_p
                                 if existing_data["date"] == plot_date:
                                     # Update existing plot data
                                     existing_data["area"] = new_plot_area
-                                    return True
+                                    return data  # Return the updated data structure
                             # If plot data for the date not found, add a new data entry
                             new_data_entry = {
                                 "date": plot_date,
@@ -113,7 +113,7 @@ def update_or_add_plotArea(data, farm_id, building_id, plot_id, plot_date, new_p
                                 "width": 0
                             }
                             plot["data"].append(new_data_entry)
-                            return True
+                            return data  # Return the updated data structure
                     # If plot ID not found, add a new plot with the data
                     new_plot = {
                         "id": plot_id,
@@ -129,7 +129,7 @@ def update_or_add_plotArea(data, farm_id, building_id, plot_id, plot_date, new_p
                         }]
                     }
                     building["plots"].append(new_plot)
-                    return True
+                    return data  # Return the updated data structure
             # If building ID not found, add a new building with the plot and data
             new_building = {
                 "id": building_id,
@@ -152,7 +152,7 @@ def update_or_add_plotArea(data, farm_id, building_id, plot_id, plot_date, new_p
                 }]
             }
             farm["buildings"].append(new_building)
-            return True
+            return data  # Return the updated data structure
     # If farm ID not found, add a new farm with the building, plot, and data
     new_farm = {
         "id": farm_id,
@@ -179,7 +179,7 @@ def update_or_add_plotArea(data, farm_id, building_id, plot_id, plot_date, new_p
         }]
     }
     data.append(new_farm)
-    return True
+    return data  # Return the updated data structure
 
 
 def update_or_add_plotFruitlets(data, farm_id, building_id, plot_id, plot_date, new_plot_fruitlets):
@@ -193,7 +193,7 @@ def update_or_add_plotFruitlets(data, farm_id, building_id, plot_id, plot_date, 
                                 if existing_data["date"] == plot_date:
                                     # Update existing plot data
                                     existing_data["fruitlets"] = new_plot_fruitlets
-                                    return True
+                                    return data  # Return the updated data structure
                             # If plot data for the date not found, add a new data entry
                             new_data_entry = {
                                 "date": plot_date,
@@ -205,7 +205,7 @@ def update_or_add_plotFruitlets(data, farm_id, building_id, plot_id, plot_date, 
                                 "width": 0
                             }
                             plot["data"].append(new_data_entry)
-                            return True
+                            return data  # Return the updated data structure
                     # If plot ID not found, add a new plot with the data
                     new_plot = {
                         "id": plot_id,
@@ -221,7 +221,7 @@ def update_or_add_plotFruitlets(data, farm_id, building_id, plot_id, plot_date, 
                         }]
                     }
                     building["plots"].append(new_plot)
-                    return True
+                    return data  # Return the updated data structure
             # If building ID not found, add a new building with the plot and data
             new_building = {
                 "id": building_id,
@@ -244,7 +244,7 @@ def update_or_add_plotFruitlets(data, farm_id, building_id, plot_id, plot_date, 
                 }]
             }
             farm["buildings"].append(new_building)
-            return True
+            return data  # Return the updated data structure
     # If farm ID not found, add a new farm with the building, plot, and data
     new_farm = {
         "id": farm_id,
@@ -271,7 +271,7 @@ def update_or_add_plotFruitlets(data, farm_id, building_id, plot_id, plot_date, 
         }]
     }
     data.append(new_farm)
-    return True
+    return data  # Return the updated data structure
 
 
 def update_or_add_plotHeight(data, farm_id, building_id, plot_id, plot_date, new_plot_height):
