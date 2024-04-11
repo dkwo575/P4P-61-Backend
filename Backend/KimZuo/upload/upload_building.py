@@ -1,5 +1,5 @@
 # Function to update or add the building name by farm ID and building ID
-def update_or_add_building_name(data, farm_id, building_id, new_building_name):
+def update_or_add_buildingName(data, farm_id, building_id, new_building_name):
     for farm in data:
         if farm["id"] == farm_id:
             for building in farm["buildings"]:

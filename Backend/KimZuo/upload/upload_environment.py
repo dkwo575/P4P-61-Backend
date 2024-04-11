@@ -1,6 +1,6 @@
 # Function to update or add the environmental data by farm ID, building ID, environment date, and new environmental
 # values
-def update_or_add_environment_data(data, farm_id, building_id, environment_date, new_environment_data):
+def update_or_add_environmentData(data, farm_id, building_id, environment_date, new_environment_data):
     for farm in data:
         if farm["id"] == farm_id:
             for building in farm["buildings"]:
@@ -43,7 +43,7 @@ def update_or_add_environment_data(data, farm_id, building_id, environment_date,
 
 
 # Function to update or add the temperature by farm ID, building ID, and environment date
-def update_or_add_temperature(data, farm_id, building_id, environment_date, new_temperature):
+def update_or_add_Temperature(data, farm_id, building_id, environment_date, new_temperature):
     for farm in data:
         if farm["id"] == farm_id:
             for building in farm["buildings"]:
@@ -106,7 +106,7 @@ def update_or_add_temperature(data, farm_id, building_id, environment_date, new_
 
 
 # Function to update or add the fluorescents by farm ID, building ID, and environment date
-def update_or_add_fluorescents(data, farm_id, building_id, environment_date, new_fluorescents):
+def update_or_add_Fluorescents(data, farm_id, building_id, environment_date, new_fluorescents):
     for farm in data:
         if farm["id"] == farm_id:
             for building in farm["buildings"]:
@@ -169,7 +169,7 @@ def update_or_add_fluorescents(data, farm_id, building_id, environment_date, new
 
 
 # Function to update or add the co2Concentration by farm ID, building ID, and environment date
-def update_or_add_co2Concentration(data, farm_id, building_id, environment_date, new_co2Concentration):
+def update_or_add_Co2Concentration(data, farm_id, building_id, environment_date, new_co2Concentration):
     for farm in data:
         if farm["id"] == farm_id:
             for building in farm["buildings"]:
@@ -232,7 +232,7 @@ def update_or_add_co2Concentration(data, farm_id, building_id, environment_date,
 
 
 # Function to update or add the irrigation by farm ID, building ID, and environment date
-def update_or_add_irrigation(data, farm_id, building_id, environment_date, new_irrigation):
+def update_or_add_Irrigation(data, farm_id, building_id, environment_date, new_irrigation):
     for farm in data:
         if farm["id"] == farm_id:
             for building in farm["buildings"]:

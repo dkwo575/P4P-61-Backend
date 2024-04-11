@@ -1,5 +1,5 @@
 # Function to update or add the data by farm ID, building ID, and data date
-def update_or_add_data(data, farm_id, building_id, data_date, new_data):
+def update_or_add_Data(data, farm_id, building_id, data_date, new_data):
     for farm in data:
         if farm["id"] == farm_id:
             for building in farm["buildings"]:
@@ -63,7 +63,7 @@ def update_or_add_data(data, farm_id, building_id, data_date, new_data):
 
 
 # Function to update or add the area data by farm ID, building ID, and data date
-def update_or_add_area(data, farm_id, building_id, data_date, new_area):
+def update_or_add_Area(data, farm_id, building_id, data_date, new_area):
     for farm in data:
         if farm["id"] == farm_id:
             for building in farm["buildings"]:
@@ -134,7 +134,7 @@ def update_or_add_area(data, farm_id, building_id, data_date, new_area):
 
 
 # Function to update or add the fruitlets data by farm ID, building ID, and data date
-def update_or_add_fruitlets(data, farm_id, building_id, data_date, new_fruitlets):
+def update_or_add_Fruitlets(data, farm_id, building_id, data_date, new_fruitlets):
     for farm in data:
         if farm["id"] == farm_id:
             for building in farm["buildings"]:
@@ -205,7 +205,7 @@ def update_or_add_fruitlets(data, farm_id, building_id, data_date, new_fruitlets
 
 
 # Function to update or add the height data by farm ID, building ID, and data date
-def update_or_add_height(data, farm_id, building_id, data_date, new_height):
+def update_or_add_Height(data, farm_id, building_id, data_date, new_height):
     for farm in data:
         if farm["id"] == farm_id:
             for building in farm["buildings"]:
@@ -276,7 +276,7 @@ def update_or_add_height(data, farm_id, building_id, data_date, new_height):
 
 
 # Function to update or add the leaves data by farm ID, building ID, and data date
-def update_or_add_leaves(data, farm_id, building_id, data_date, new_leaves):
+def update_or_add_Leaves(data, farm_id, building_id, data_date, new_leaves):
     for farm in data:
         if farm["id"] == farm_id:
             for building in farm["buildings"]:
@@ -347,7 +347,7 @@ def update_or_add_leaves(data, farm_id, building_id, data_date, new_leaves):
 
 
 # Function to update or add the volume data by farm ID, building ID, and data date
-def update_or_add_volume(data, farm_id, building_id, data_date, new_volume):
+def update_or_add_Volume(data, farm_id, building_id, data_date, new_volume):
     for farm in data:
         if farm["id"] == farm_id:
             for building in farm["buildings"]:
@@ -418,7 +418,7 @@ def update_or_add_volume(data, farm_id, building_id, data_date, new_volume):
 
 
 # Function to update or add the width data by farm ID, building ID, and data date
-def update_or_add_width(data, farm_id, building_id, data_date, new_width):
+def update_or_add_Width(data, farm_id, building_id, data_date, new_width):
     for farm in data:
         if farm["id"] == farm_id:
             for building in farm["buildings"]:

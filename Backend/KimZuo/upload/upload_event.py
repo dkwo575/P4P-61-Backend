@@ -1,5 +1,5 @@
 # Function to update or add the event text by farm ID, building ID, and event date
-def update_or_add_event_text(data, farm_id, building_id, event_date, new_text):
+def update_or_add_eventText(data, farm_id, building_id, event_date, new_text):
     for farm in data:
         if farm["id"] == farm_id:
             for building in farm["buildings"]:

@@ -1,6 +1,9 @@
 import os
 from flask import Flask, request, jsonify
 from database import *
+from upload.upload_farm import *
+from upload.upload_building import *
+from upload.upload_event import *
 from upload.upload_plot import *
 
 app = Flask(__name__)
@@ -13,7 +16,7 @@ data = database_read(test_database_directory)
 # upload_farm.py relate
 #
 @app.route('/args/update_or_add_farm_name', methods=['POST'])
-def update_or_add_farmName():
+def update_or_add_farm_name():
     farm_id = request.args.get('farm_id')
     new_farm_name = request.args.get('new_farm_name')
 
@@ -24,8 +27,43 @@ def update_or_add_farmName():
 
 
 #
-# upload_plot.py relate
+# upload_building.py relate
 #
+@app.route('/args/update_or_add_building_name', methods=['POST'])
+def update_or_add_building_name():
+    farm_id = request.args.get('farm_id')
+    building_id = request.args.get('building_id')
+    new_building_name = request.args.get('new_building_name')
+
+    # Call the function to update or add building name
+    success = update_or_add_buildingName(data, int(farm_id), int(building_id), new_building_name)
+    return jsonify({'success': success})
+
+
+#
+# upload_event.py relate
+#
+@app.route('/args/update_or_add_event', methods=['POST'])
+def update_or_add_plot_name():
+    farm_id = request.args.get('farm_id')
+    building_id = request.args.get('building_id')
+    event_date = request.args.get('event_date')
+    new_text = request.args.get('new_text')
+
+    # Call the function to update or add plot name
+    success = update_or_add_eventText(data, int(farm_id), int(building_id), event_date, new_text)
+    database_write(test_database_directory, success)
+    print(success)
+    return jsonify({'success': success})
+
+#
+# upload_environment.py relate
+#
+
+#
+# upload_data.py relate
+#
+
 
 # Route for updating or adding plot name
 @app.route('/args/update_or_add_plot_name', methods=['POST'])
