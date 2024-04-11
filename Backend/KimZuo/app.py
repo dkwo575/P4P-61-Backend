@@ -4,6 +4,8 @@ from database import *
 from upload.upload_farm import *
 from upload.upload_building import *
 from upload.upload_event import *
+from upload.upload_environment import *
+from upload.upload_data import *
 from upload.upload_plot import *
 
 app = Flask(__name__)
@@ -56,26 +58,186 @@ def update_or_add_plot_name():
     print(success)
     return jsonify({'success': success})
 
+
 #
 # upload_environment.py relate
 #
+# Route for updating or adding environment temperature
+@app.route('/args/update_or_add_environment_temperature', methods=['POST'])
+def update_or_add_environment_temperature():
+    farm_id = request.args.get('farm_id')
+    building_id = request.args.get('building_id')
+    environment_date = request.args.get('environment_date')
+    new_environment_temperature = request.args.get('new_environment_temperature')
+
+    # Call the function to update or add plot name
+    success = update_or_add_Temperature(data, int(farm_id), int(building_id), environment_date,
+                                        int(new_environment_temperature))
+    database_write(test_database_directory, success)
+    print(success)
+    return jsonify({'success': success})
+
+
+# Route for updating or adding environment fluorescent
+@app.route('/args/update_or_add_environment_fluorescent', methods=['POST'])
+def update_or_add_environment_fluorescent():
+    farm_id = request.args.get('farm_id')
+    building_id = request.args.get('building_id')
+    environment_date = request.args.get('environment_date')
+    new_environment_fluorescent = request.args.get('new_environment_fluorescent')
+
+    # Call the function to update or add plot name
+    success = update_or_add_Fluorescents(data, int(farm_id), int(building_id), environment_date,
+                                         int(new_environment_fluorescent))
+    database_write(test_database_directory, success)
+    print(success)
+    return jsonify({'success': success})
+
+
+# Route for updating or adding environment Co2 Concentration
+@app.route('/args/update_or_add_environment_Co2Concentration', methods=['POST'])
+def update_or_add_environment_Co2Concentration():
+    farm_id = request.args.get('farm_id')
+    building_id = request.args.get('building_id')
+    environment_date = request.args.get('environment_date')
+    new_environment_Co2Concentration = request.args.get('new_environment_Co2Concentration')
+
+    # Call the function to update or add plot name
+    success = update_or_add_Co2Concentration(data, int(farm_id), int(building_id), environment_date,
+                                             int(new_environment_Co2Concentration))
+    database_write(test_database_directory, success)
+    print(success)
+    return jsonify({'success': success})
+
+
+# Route for updating or adding environment irrigation
+@app.route('/args/update_or_add_environment_irrigation', methods=['POST'])
+def update_or_add_environment_irrigation():
+    farm_id = request.args.get('farm_id')
+    building_id = request.args.get('building_id')
+    environment_date = request.args.get('environment_date')
+    new_environment_irrigation = request.args.get('new_environment_irrigation')
+
+    # Call the function to update or add plot name
+    success = update_or_add_Irrigation(data, int(farm_id), int(building_id), environment_date,
+                                       int(new_environment_irrigation))
+    database_write(test_database_directory, success)
+    print(success)
+    return jsonify({'success': success})
+
 
 #
 # upload_data.py relate
 #
+# Route for updating or adding data area
+@app.route('/args/update_or_add_data_area', methods=['POST'])
+def update_or_add_data_area():
+    farm_id = request.args.get('farm_id')
+    building_id = request.args.get('building_id')
+    data_date = request.args.get('data_date')
+    new_data_area = request.args.get('new_data_area')
+
+    # Call the function to update or add plot name
+    success = update_or_add_Area(data, int(farm_id), int(building_id), data_date,
+                                 int(new_data_area))
+    database_write(test_database_directory, success)
+    print(success)
+    return jsonify({'success': success})
 
 
+# Route for updating or adding data fruitlets
+@app.route('/args/update_or_add_data_fruitlets', methods=['POST'])
+def update_or_add_data_fruitlets():
+    farm_id = request.args.get('farm_id')
+    building_id = request.args.get('building_id')
+    data_date = request.args.get('data_date')
+    new_data_fruitlets = request.args.get('new_data_fruitlets')
+
+    # Call the function to update or add plot name
+    success = update_or_add_Fruitlets(data, int(farm_id), int(building_id), data_date,
+                                      int(new_data_fruitlets))
+    database_write(test_database_directory, success)
+    print(success)
+    return jsonify({'success': success})
+
+
+# Route for updating or adding data height
+@app.route('/args/update_or_add_data_height', methods=['POST'])
+def update_or_add_data_height():
+    farm_id = request.args.get('farm_id')
+    building_id = request.args.get('building_id')
+    data_date = request.args.get('data_date')
+    new_data_height = request.args.get('new_data_height')
+
+    # Call the function to update or add plot name
+    success = update_or_add_Height(data, int(farm_id), int(building_id), data_date,
+                                   int(new_data_height))
+    database_write(test_database_directory, success)
+    print(success)
+    return jsonify({'success': success})
+
+
+# Route for updating or adding data leaves
+@app.route('/args/update_or_add_data_leaves', methods=['POST'])
+def update_or_add_data_leaves():
+    farm_id = request.args.get('farm_id')
+    building_id = request.args.get('building_id')
+    data_date = request.args.get('data_date')
+    new_data_leaves = request.args.get('new_data_leaves')
+
+    # Call the function to update or add plot name
+    success = update_or_add_Leaves(data, int(farm_id), int(building_id), data_date,
+                                   int(new_data_leaves))
+    database_write(test_database_directory, success)
+    print(success)
+    return jsonify({'success': success})
+
+
+# Route for updating or adding data volume
+@app.route('/args/update_or_add_data_volume', methods=['POST'])
+def update_or_add_data_volume():
+    farm_id = request.args.get('farm_id')
+    building_id = request.args.get('building_id')
+    data_date = request.args.get('data_date')
+    new_data_volume = request.args.get('new_data_volume')
+
+    # Call the function to update or add plot name
+    success = update_or_add_Volume(data, int(farm_id), int(building_id), data_date,
+                                   int(new_data_volume))
+    database_write(test_database_directory, success)
+    print(success)
+    return jsonify({'success': success})
+
+
+# Route for updating or adding data volume
+@app.route('/args/update_or_add_data_width', methods=['POST'])
+def update_or_add_data_volume():
+    farm_id = request.args.get('farm_id')
+    building_id = request.args.get('building_id')
+    data_date = request.args.get('data_date')
+    new_data_width = request.args.get('new_data_width')
+
+    # Call the function to update or add plot name
+    success = update_or_add_Width(data, int(farm_id), int(building_id), data_date,
+                                  int(new_data_width))
+    database_write(test_database_directory, success)
+    print(success)
+    return jsonify({'success': success})
+
+
+#
+# upload_plot.py relate
+#
 # Route for updating or adding plot name
 @app.route('/args/update_or_add_plot_name', methods=['POST'])
 def update_or_add_plot_name():
     farm_id = request.args.get('farm_id')
     building_id = request.args.get('building_id')
     plot_id = request.args.get('plot_id')
-    plot_date = request.args.get('plot_date')
     new_plot_name = request.args.get('new_plot_name')
 
     # Call the function to update or add plot name
-    success = update_or_add_plotName(data, int(farm_id), int(building_id), int(plot_id), plot_date, new_plot_name)
+    success = update_or_add_plotName(data, int(farm_id), int(building_id), int(plot_id), new_plot_name)
     database_write(test_database_directory, success)
     print(success)
     return jsonify({'success': success})
