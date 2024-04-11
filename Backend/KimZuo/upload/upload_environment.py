@@ -9,19 +9,19 @@ def update_or_add_environmentData(data, farm_id, building_id, environment_date, 
                         if environment["date"] == environment_date:
                             # Update existing environmental data
                             environment.update(new_environment_data)
-                            return True
+                            return data  # Return the updated data structure
                     # If environment date not found, add a new environment with the provided data
                     new_environment = {"date": environment_date}
                     new_environment.update(new_environment_data)
                     building["environment"].append(new_environment)
-                    return True
+                    return data  # Return the updated data structure
             # If building ID not found, add a new building with the environment
             new_environment = {"date": environment_date}
             new_environment.update(new_environment_data)
             building_data = {"id": building_id, "buildingName": "", "events": [], "environment": [new_environment],
                              "data": [], "plots": []}
             farm["buildings"].append(building_data)
-            return True
+            return data  # Return the updated data structure
     # If farm ID not found, add a new farm with the building and environment
     new_environment = {"date": environment_date}
     new_environment.update(new_environment_data)
@@ -39,7 +39,7 @@ def update_or_add_environmentData(data, farm_id, building_id, environment_date, 
             }
         ]
     })
-    return True
+    return data  # Return the updated data structure
 
 
 # Function to update or add the temperature by farm ID, building ID, and environment date
@@ -51,7 +51,7 @@ def update_or_add_Temperature(data, farm_id, building_id, environment_date, new_
                     for environment in building["environment"]:
                         if environment["date"] == environment_date:
                             environment["temperature"] = new_temperature
-                            return True
+                            return data  # Return the updated data structure
                     # If environment date not found, add a new environment
                     building["environment"].append({
                         "date": environment_date,
@@ -60,7 +60,7 @@ def update_or_add_Temperature(data, farm_id, building_id, environment_date, new_
                         "co2Concentration": 0,
                         "irrigation": 0
                     })
-                    return True
+                    return data  # Return the updated data structure
             # If building ID not found, add a new building with the environment
             farm["buildings"].append({
                 "id": building_id,
@@ -78,7 +78,7 @@ def update_or_add_Temperature(data, farm_id, building_id, environment_date, new_
                 "data": [],
                 "plots": []
             })
-            return True
+            return data  # Return the updated data structure
     # If farm ID not found, add a new farm with the building and environment
     data.append({
         "id": farm_id,
@@ -102,7 +102,7 @@ def update_or_add_Temperature(data, farm_id, building_id, environment_date, new_
             }
         ]
     })
-    return True
+    return data  # Return the updated data structure
 
 
 # Function to update or add the fluorescents by farm ID, building ID, and environment date
@@ -114,7 +114,7 @@ def update_or_add_Fluorescents(data, farm_id, building_id, environment_date, new
                     for environment in building["environment"]:
                         if environment["date"] == environment_date:
                             environment["fluorescents"] = new_fluorescents
-                            return True
+                            return data  # Return the updated data structure
                     # If environment date not found, add a new environment
                     building["environment"].append({
                         "date": environment_date,
@@ -123,7 +123,7 @@ def update_or_add_Fluorescents(data, farm_id, building_id, environment_date, new
                         "co2Concentration": 0,
                         "irrigation": 0
                     })
-                    return True
+                    return data  # Return the updated data structure
             # If building ID not found, add a new building with the environment
             farm["buildings"].append({
                 "id": building_id,
@@ -141,7 +141,7 @@ def update_or_add_Fluorescents(data, farm_id, building_id, environment_date, new
                 "data": [],
                 "plots": []
             })
-            return True
+            return data  # Return the updated data structure
     # If farm ID not found, add a new farm with the building and environment
     data.append({
         "id": farm_id,
@@ -165,7 +165,7 @@ def update_or_add_Fluorescents(data, farm_id, building_id, environment_date, new
             }
         ]
     })
-    return True
+    return data  # Return the updated data structure
 
 
 # Function to update or add the co2Concentration by farm ID, building ID, and environment date
@@ -177,7 +177,7 @@ def update_or_add_Co2Concentration(data, farm_id, building_id, environment_date,
                     for environment in building["environment"]:
                         if environment["date"] == environment_date:
                             environment["co2Concentration"] = new_co2Concentration
-                            return True
+                            return data  # Return the updated data structure
                     # If environment date not found, add a new environment
                     building["environment"].append({
                         "date": environment_date,
@@ -186,7 +186,7 @@ def update_or_add_Co2Concentration(data, farm_id, building_id, environment_date,
                         "co2Concentration": new_co2Concentration,
                         "irrigation": 0
                     })
-                    return True
+                    return data  # Return the updated data structure
             # If building ID not found, add a new building with the environment
             farm["buildings"].append({
                 "id": building_id,
@@ -204,7 +204,7 @@ def update_or_add_Co2Concentration(data, farm_id, building_id, environment_date,
                 "data": [],
                 "plots": []
             })
-            return True
+            return data  # Return the updated data structure
     # If farm ID not found, add a new farm with the building and environment
     data.append({
         "id": farm_id,
@@ -228,7 +228,7 @@ def update_or_add_Co2Concentration(data, farm_id, building_id, environment_date,
             }
         ]
     })
-    return True
+    return data  # Return the updated data structure
 
 
 # Function to update or add the irrigation by farm ID, building ID, and environment date
@@ -240,7 +240,7 @@ def update_or_add_Irrigation(data, farm_id, building_id, environment_date, new_i
                     for environment in building["environment"]:
                         if environment["date"] == environment_date:
                             environment["irrigation"] = new_irrigation
-                            return True
+                            return data  # Return the updated data structure
                     # If environment date not found, add a new environment
                     building["environment"].append({
                         "date": environment_date,
@@ -249,7 +249,7 @@ def update_or_add_Irrigation(data, farm_id, building_id, environment_date, new_i
                         "co2Concentration": 0,
                         "irrigation": new_irrigation
                     })
-                    return True
+                    return data  # Return the updated data structure
             # If building ID not found, add a new building with the environment
             farm["buildings"].append({
                 "id": building_id,
@@ -267,7 +267,7 @@ def update_or_add_Irrigation(data, farm_id, building_id, environment_date, new_i
                 "data": [],
                 "plots": []
             })
-            return True
+            return data  # Return the updated data structure
     # If farm ID not found, add a new farm with the building and environment
     data.append({
         "id": farm_id,
@@ -291,4 +291,4 @@ def update_or_add_Irrigation(data, farm_id, building_id, environment_date, new_i
             }
         ]
     })
-    return True
+    return data  # Return the updated data structure

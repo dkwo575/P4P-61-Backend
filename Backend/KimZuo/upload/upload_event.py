@@ -28,7 +28,7 @@ def update_or_add_eventText(data, farm_id, building_id, event_date, new_text):
                 "data": [],
                 "plots": []
             })
-            return True
+            return data  # Return the updated data structure
     # If farm ID not found, add a new farm with the building and event
     data.append({
         "id": farm_id,
@@ -49,4 +49,4 @@ def update_or_add_eventText(data, farm_id, building_id, event_date, new_text):
             }
         ]
     })
-    return True
+    return data  # Return the updated data structure

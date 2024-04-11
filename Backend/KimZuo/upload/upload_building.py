@@ -5,7 +5,7 @@ def update_or_add_buildingName(data, farm_id, building_id, new_building_name):
             for building in farm["buildings"]:
                 if building["id"] == building_id:
                     building["buildingName"] = new_building_name
-                    return True
+                    return data  # Return the updated data structure
             # If building ID not found, add a new building
             farm["buildings"].append({
                 "id": building_id,
@@ -15,7 +15,7 @@ def update_or_add_buildingName(data, farm_id, building_id, new_building_name):
                 "data": [],
                 "plots": []
             })
-            return True
+            return data  # Return the updated data structure
     # If farm ID not found, add a new farm with the building
     data.append({
         "id": farm_id,
@@ -31,4 +31,4 @@ def update_or_add_buildingName(data, farm_id, building_id, new_building_name):
             }
         ]
     })
-    return True
+    return data  # Return the updated data structure
