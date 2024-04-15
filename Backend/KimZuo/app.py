@@ -293,6 +293,23 @@ def update_or_add_plot_height():
     return jsonify({'success': success})
 
 
+# Route for updating or adding plot leaves
+@app.route('/args/update_or_add_plot_leaves', methods=['POST'])
+def update_or_add_plot_volume():
+    farm_id = request.args.get('farm_id')
+    building_id = request.args.get('building_id')
+    plot_id = request.args.get('plot_id')
+    plot_date = request.args.get('plot_date')
+    new_plot_leaves = request.args.get('new_plot_leaves')
+
+    # Call the function to update or add plot volume
+    success = update_or_add_plotLeaves(data, int(farm_id), int(building_id), int(plot_id), plot_date,
+                                       int(new_plot_leaves))
+    database_write(test_database_directory, success)
+    print(success)
+    return jsonify({'success': success})
+
+
 # Route for updating or adding plot volume
 @app.route('/args/update_or_add_plot_volume', methods=['POST'])
 def update_or_add_plot_volume():
@@ -311,7 +328,7 @@ def update_or_add_plot_volume():
 
 
 # Route for updating or adding plot width
-@app.route('/args/update_or_add_plot_volume', methods=['POST'])
+@app.route('/args/update_or_add_plot_width', methods=['POST'])
 def update_or_add_plot_volume():
     farm_id = request.args.get('farm_id')
     building_id = request.args.get('building_id')
