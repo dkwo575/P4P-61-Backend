@@ -1,6 +1,7 @@
 import os
 from flask import Flask, request, jsonify
 from database import *
+from get.get_farm import *
 from upload.upload_farm import *
 from upload.upload_building import *
 from upload.upload_event import *
@@ -46,7 +47,7 @@ def update_or_add_building_name():
 # upload_event.py relate
 #
 @app.route('/args/update_or_add_event', methods=['POST'])
-def update_or_add_plot_name():
+def update_or_add_event_text():
     farm_id = request.args.get('farm_id')
     building_id = request.args.get('building_id')
     event_date = request.args.get('event_date')
@@ -211,7 +212,7 @@ def update_or_add_data_volume():
 
 # Route for updating or adding data volume
 @app.route('/args/update_or_add_data_width', methods=['POST'])
-def update_or_add_data_volume():
+def update_or_add_data_width():
     farm_id = request.args.get('farm_id')
     building_id = request.args.get('building_id')
     data_date = request.args.get('data_date')
@@ -293,6 +294,23 @@ def update_or_add_plot_height():
     return jsonify({'success': success})
 
 
+# Route for updating or adding plot leaves
+@app.route('/args/update_or_add_plot_leaves', methods=['POST'])
+def update_or_add_plot_leaves():
+    farm_id = request.args.get('farm_id')
+    building_id = request.args.get('building_id')
+    plot_id = request.args.get('plot_id')
+    plot_date = request.args.get('plot_date')
+    new_plot_leaves = request.args.get('new_plot_leaves')
+
+    # Call the function to update or add plot volume
+    success = update_or_add_plotLeaves(data, int(farm_id), int(building_id), int(plot_id), plot_date,
+                                       int(new_plot_leaves))
+    database_write(test_database_directory, success)
+    print(success)
+    return jsonify({'success': success})
+
+
 # Route for updating or adding plot volume
 @app.route('/args/update_or_add_plot_volume', methods=['POST'])
 def update_or_add_plot_volume():
@@ -311,8 +329,8 @@ def update_or_add_plot_volume():
 
 
 # Route for updating or adding plot width
-@app.route('/args/update_or_add_plot_volume', methods=['POST'])
-def update_or_add_plot_volume():
+@app.route('/args/update_or_add_plot_width', methods=['POST'])
+def update_or_add_plot_width():
     farm_id = request.args.get('farm_id')
     building_id = request.args.get('building_id')
     plot_id = request.args.get('plot_id')
@@ -325,6 +343,20 @@ def update_or_add_plot_volume():
     database_write(test_database_directory, success)
     print(success)
     return jsonify({'success': success})
+
+
+#
+# get_farm.py relate
+#
+@app.route('/args/get_farm_name', methods=['GET'])
+def get_farm_name():
+    farm_id = request.args.get('farm_id')
+
+    try:
+        farm_name = get_farmName(data, int(farm_id))
+        return jsonify({"farm_name": farm_name})
+    except ValueError as e:
+        return jsonify({"error": str(e)})
 
 
 # Similarly, create routes for updating or adding plot volume and width
