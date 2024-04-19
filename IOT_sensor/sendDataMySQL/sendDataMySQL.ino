@@ -59,4 +59,82 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
 
+  Load_DHT11_data();
+  String postData = "temperature=" + String(temperature) + " & humidity=" + String(humidity);
+
+  HTTPClient http;
+  http.begin(Server_URL);
+  http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+
+  int httpCode = http.POST(postData);
+
+  String payload = http.getString();
+
+
+  if(httpCode > 0) {
+    // file found at server
+    if(httpCode == HTTP_CODE_OK) {
+      String payload = http.getString();
+      Serial.println(payload);
+    } else {
+      // HTTP header has been send and Server response header has been handled
+      Serial.printf("[HTTP] GET... code: %d\n", httpCode);
+    }
+  } else {
+    Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
+  }
+  
+  http.end();  //Close connection
+  
+  Serial.print("server URL : "); Serial.println(Server_URL);
+  Serial.print("Data: "); Serial.println(postData);
+  Serial.print("httpCode: "); Serial.println(httpCode);
+  Serial.print("payload: "); Serial.println(payload);
+  Serial.println("--------------------------------------------------");
+
+  delay(10000);
+
+
 }
+
+
+void Load_DHT11_data() {
+
+  int chk = DHT11.read(DHT11PIN);
+
+  //--------------------------
+  // read sensor and check any error
+  Serial.print("Read sensor: ");
+  switch (chk)
+  {
+    case DHTLIB_OK: 
+                Serial.println("OK"); 
+                break;
+    case DHTLIB_ERROR_CHECKSUM: 
+                Serial.println("Checksum error"); 
+                break;
+    case DHTLIB_ERROR_TIMEOUT: 
+                Serial.println("Time out error"); 
+                break;
+    default: 
+                Serial.println("Unknown error"); 
+                break;
+  }
+
+  temperature = DHT11.temperature;
+  humidity = DHT11.humidity;
+
+  //--------------
+  // check any read fail
+  if (isnan(temperature) || isnan(humidity)) {
+    Serial.println("Failed to read from DHT sensor!");
+    temperature = 0;
+    humidity = 0;
+  }
+  //----------------
+
+  Serial.printf("Temperature: %d °C\n", temperature);
+  Serial.printf("Humidity: %d %%\n", humidity);
+
+}
+
