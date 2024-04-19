@@ -1,6 +1,8 @@
 import os
 from flask import Flask, request, jsonify
 from database import *
+from get.get_building import *
+from get.get_environment import *
 from get.get_farm import *
 from upload.upload_farm import *
 from upload.upload_building import *
@@ -355,6 +357,76 @@ def get_farm_name():
     try:
         farm_name = get_farmName(data, int(farm_id))
         return jsonify({"farm_name": farm_name})
+    except ValueError as e:
+        return jsonify({"error": str(e)})
+
+
+#
+# get_building.py relate
+#
+@app.route('/args/get_building_name', methods=['GET'])
+def get_building_name():
+    farm_id = request.args.get('farm_id')
+    building_id = request.args.get('building_id')
+
+    try:
+        building_name = get_buildingName(data, int(farm_id), int(building_id))
+        return jsonify({"building_name": building_name})
+    except ValueError as e:
+        return jsonify({"error": str(e)})
+
+
+#
+# get_environment.py relate
+#
+@app.route('/args/get_environment_temperature', methods=['GET'])
+def get_environment_temperature():
+    farm_id = request.args.get('farm_id')
+    building_id = request.args.get('building_id')
+    environment_date = request.args.get('environment_date')
+
+    try:
+        temperature = get_Temperature(data, int(farm_id), int(building_id), environment_date)
+        return jsonify({"temperature": temperature})
+    except ValueError as e:
+        return jsonify({"error": str(e)})
+
+
+@app.route('/args/get_environment_fluorescents', methods=['GET'])
+def get_environment_fluorescents():
+    farm_id = request.args.get('farm_id')
+    building_id = request.args.get('building_id')
+    environment_date = request.args.get('environment_date')
+
+    try:
+        fluorescents = get_Fluorescents(data, int(farm_id), int(building_id), environment_date)
+        return jsonify({"fluorescent": fluorescents})
+    except ValueError as e:
+        return jsonify({"error": str(e)})
+
+
+@app.route('/args/get_environment_co2Concentration', methods=['GET'])
+def get_environment_co2Concentration():
+    farm_id = request.args.get('farm_id')
+    building_id = request.args.get('building_id')
+    environment_date = request.args.get('environment_date')
+
+    try:
+        co2Concentration = get_Co2Concentration(data, int(farm_id), int(building_id), environment_date)
+        return jsonify({"Co2 Concentration": co2Concentration})
+    except ValueError as e:
+        return jsonify({"error": str(e)})
+
+
+@app.route('/args/get_environment_irrigation', methods=['GET'])
+def get_environment_irrigation():
+    farm_id = request.args.get('farm_id')
+    building_id = request.args.get('building_id')
+    environment_date = request.args.get('environment_date')
+
+    try:
+        irrigation = get_Irrigation(data, int(farm_id), int(building_id), environment_date)
+        return jsonify({"irrigation": irrigation})
     except ValueError as e:
         return jsonify({"error": str(e)})
 
