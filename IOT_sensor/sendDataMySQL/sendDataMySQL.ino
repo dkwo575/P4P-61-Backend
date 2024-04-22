@@ -9,8 +9,17 @@
 // #include <MySQL_Encrypt_Sha1.h>
 // #include <MySQL_Packet.h>
 
+// Pin number
 #define DHT11PIN        17  //Temperature and humiddity sensor pin
-#define LED_BUILTIN 27  //LED pins
+#define LEDPIN          27  //LED pin
+//#define SERVOPIN        26  //Servo pin // we are not using servor pin right now
+#define FANPIN1         19  //Fan IN+ pin
+#define FANPIN2         18  //Fan IN- pin
+#define STEAMPIN        35  //Steam sensor pin
+#define LIGHTPIN        34  //Photoresistor pin
+#define SOILHUMIDITYPIN 32  //Soil humidity sensor pin
+#define WATERLEVELPIN   33  //Water level sensor pin
+#define RELAYPIN        25  //Relay pin
 
 dht11 DHT11;
 
@@ -27,6 +36,7 @@ String Server_URL = HOST_NAME + PHP_FILE_NAME;
 
 int temperature = 0;
 int humidity =0;
+String light;
 
 
 void setup() {
@@ -34,6 +44,16 @@ void setup() {
 
   Serial.begin(115200);
   delay(100);
+
+    // set pin mode
+  pinMode(LEDPIN,OUTPUT);
+  pinMode(STEAMPIN,INPUT);
+  pinMode(LIGHTPIN,INPUT);
+  // pinMode(SOILHUMIDITYPIN,INPUT);
+  // pinMode(WATERLEVELPIN,INPUT);
+  // pinMode(RELAYPIN,OUTPUT);
+  // pinMode(FANPIN1,OUTPUT);
+  // pinMode(FANPIN2,OUTPUT);
 
   
   Serial.println("DHT11 Test working");
@@ -60,7 +80,11 @@ void loop() {
   // put your main code here, to run repeatedly:
 
   Load_DHT11_data();
-  String postData = "temperature=" + String(temperature) + " & humidity=" + String(humidity);
+
+  light = String(analogRead(LIGHTPIN));
+  Serial.println("Light value: " + String(light));
+
+  String postData = "temperature=" + String(temperature) + " & humidity=" + String(humidity) + "& light=" + String(light);
 
   HTTPClient http;
   http.begin(Server_URL);
