@@ -3,7 +3,9 @@ from flask import Flask, request, jsonify
 from database import *
 from get.get_building import *
 from get.get_environment import *
+from get.get_event import *
 from get.get_farm import *
+from get.get_plot import *
 from upload.upload_farm import *
 from upload.upload_building import *
 from upload.upload_event import *
@@ -431,7 +433,121 @@ def get_environment_irrigation():
         return jsonify({"error": str(e)})
 
 
-# Similarly, create routes for updating or adding plot volume and width
+#
+# get_event.py relate
+#
+@app.route('/args/get_event_text', methods=['GET'])
+def get_event_text():
+    farm_id = request.args.get('farm_id')
+    building_id = request.args.get('building_id')
+    event_date = request.args.get('event_date')
+
+    try:
+        event_text = get_eventText(data, int(farm_id), int(building_id), event_date)
+        return jsonify({"event_text": event_text})
+    except ValueError as e:
+        return jsonify({"error": str(e)})
+
+
+#
+# get_plot.py relate
+#
+@app.route('/args/get_plot_name', methods=['GET'])
+def get_plot_name():
+    farm_id = request.args.get('farm_id')
+    building_id = request.args.get('building_id')
+    plot_id = request.args.get('plot_id')
+
+    try:
+        plot_name = get_plotName(data, int(farm_id), int(building_id), int(plot_id))
+        return jsonify({"event_text": plot_name})
+    except ValueError as e:
+        return jsonify({"error": str(e)})
+
+
+@app.route('/args/get_plot_area', methods=['GET'])
+def get_plot_area():
+    farm_id = request.args.get('farm_id')
+    building_id = request.args.get('building_id')
+    plot_id = request.args.get('plot_id')
+    plot_date = request.args.get('plot_date')
+
+    try:
+        plot_area = get_plotArea(data, int(farm_id), int(building_id), int(plot_id), plot_date)
+        return jsonify({"event_text": plot_area})
+    except ValueError as e:
+        return jsonify({"error": str(e)})
+
+
+@app.route('/args/get_plot_fruitlets', methods=['GET'])
+def get_plot_fruitlets():
+    farm_id = request.args.get('farm_id')
+    building_id = request.args.get('building_id')
+    plot_id = request.args.get('plot_id')
+    plot_date = request.args.get('plot_date')
+
+    try:
+        plot_fruitlets = get_plotFruitlets(data, int(farm_id), int(building_id), int(plot_id), plot_date)
+        return jsonify({"event_text": plot_fruitlets})
+    except ValueError as e:
+        return jsonify({"error": str(e)})
+
+
+@app.route('/args/get_plot_height', methods=['GET'])
+def get_plot_height():
+    farm_id = request.args.get('farm_id')
+    building_id = request.args.get('building_id')
+    plot_id = request.args.get('plot_id')
+    plot_date = request.args.get('plot_date')
+
+    try:
+        plot_height = get_plotHeight(data, int(farm_id), int(building_id), int(plot_id), plot_date)
+        return jsonify({"event_text": plot_height})
+    except ValueError as e:
+        return jsonify({"error": str(e)})
+
+
+@app.route('/args/get_plot_leaves', methods=['GET'])
+def get_plot_leaves():
+    farm_id = request.args.get('farm_id')
+    building_id = request.args.get('building_id')
+    plot_id = request.args.get('plot_id')
+    plot_date = request.args.get('plot_date')
+
+    try:
+        plot_leaves = get_plotLeaves(data, int(farm_id), int(building_id), int(plot_id), plot_date)
+        return jsonify({"event_text": plot_leaves})
+    except ValueError as e:
+        return jsonify({"error": str(e)})
+
+
+@app.route('/args/get_plot_volume', methods=['GET'])
+def get_plot_volume():
+    farm_id = request.args.get('farm_id')
+    building_id = request.args.get('building_id')
+    plot_id = request.args.get('plot_id')
+    plot_date = request.args.get('plot_date')
+
+    try:
+        plot_volume = get_plotVolume(data, int(farm_id), int(building_id), int(plot_id), plot_date)
+        return jsonify({"event_text": plot_volume})
+    except ValueError as e:
+        return jsonify({"error": str(e)})
+
+
+@app.route('/args/get_plot_width', methods=['GET'])
+def get_plot_width():
+    farm_id = request.args.get('farm_id')
+    building_id = request.args.get('building_id')
+    plot_id = request.args.get('plot_id')
+    plot_date = request.args.get('plot_date')
+
+    try:
+        plot_width = get_plotWidth(data, int(farm_id), int(building_id), int(plot_id), plot_date)
+        return jsonify({"event_text": plot_width})
+    except ValueError as e:
+        return jsonify({"error": str(e)})
+
 
 if __name__ == '__main__':
     app.run(debug=True)
