@@ -1,6 +1,11 @@
 import os
 from flask import Flask, request, jsonify
 from database import *
+from get.get_building import *
+from get.get_environment import *
+from get.get_event import *
+from get.get_farm import *
+from get.get_plot import *
 from upload.upload_farm import *
 from upload.upload_building import *
 from upload.upload_event import *
@@ -46,7 +51,7 @@ def update_or_add_building_name():
 # upload_event.py relate
 #
 @app.route('/args/update_or_add_event', methods=['POST'])
-def update_or_add_plot_name():
+def update_or_add_event_text():
     farm_id = request.args.get('farm_id')
     building_id = request.args.get('building_id')
     event_date = request.args.get('event_date')
@@ -211,7 +216,7 @@ def update_or_add_data_volume():
 
 # Route for updating or adding data volume
 @app.route('/args/update_or_add_data_width', methods=['POST'])
-def update_or_add_data_volume():
+def update_or_add_data_width():
     farm_id = request.args.get('farm_id')
     building_id = request.args.get('building_id')
     data_date = request.args.get('data_date')
@@ -295,7 +300,7 @@ def update_or_add_plot_height():
 
 # Route for updating or adding plot leaves
 @app.route('/args/update_or_add_plot_leaves', methods=['POST'])
-def update_or_add_plot_volume():
+def update_or_add_plot_leaves():
     farm_id = request.args.get('farm_id')
     building_id = request.args.get('building_id')
     plot_id = request.args.get('plot_id')
@@ -329,7 +334,7 @@ def update_or_add_plot_volume():
 
 # Route for updating or adding plot width
 @app.route('/args/update_or_add_plot_width', methods=['POST'])
-def update_or_add_plot_volume():
+def update_or_add_plot_width():
     farm_id = request.args.get('farm_id')
     building_id = request.args.get('building_id')
     plot_id = request.args.get('plot_id')
@@ -344,7 +349,205 @@ def update_or_add_plot_volume():
     return jsonify({'success': success})
 
 
-# Similarly, create routes for updating or adding plot volume and width
+#
+# get_farm.py relate
+#
+@app.route('/args/get_farm_name', methods=['GET'])
+def get_farm_name():
+    farm_id = request.args.get('farm_id')
+
+    try:
+        farm_name = get_farmName(data, int(farm_id))
+        return jsonify({"farm_name": farm_name})
+    except ValueError as e:
+        return jsonify({"error": str(e)})
+
+
+#
+# get_building.py relate
+#
+@app.route('/args/get_building_name', methods=['GET'])
+def get_building_name():
+    farm_id = request.args.get('farm_id')
+    building_id = request.args.get('building_id')
+
+    try:
+        building_name = get_buildingName(data, int(farm_id), int(building_id))
+        return jsonify({"building_name": building_name})
+    except ValueError as e:
+        return jsonify({"error": str(e)})
+
+
+#
+# get_environment.py relate
+#
+@app.route('/args/get_environment_temperature', methods=['GET'])
+def get_environment_temperature():
+    farm_id = request.args.get('farm_id')
+    building_id = request.args.get('building_id')
+    environment_date = request.args.get('environment_date')
+
+    try:
+        temperature = get_Temperature(data, int(farm_id), int(building_id), environment_date)
+        return jsonify({"temperature": temperature})
+    except ValueError as e:
+        return jsonify({"error": str(e)})
+
+
+@app.route('/args/get_environment_fluorescents', methods=['GET'])
+def get_environment_fluorescents():
+    farm_id = request.args.get('farm_id')
+    building_id = request.args.get('building_id')
+    environment_date = request.args.get('environment_date')
+
+    try:
+        fluorescents = get_Fluorescents(data, int(farm_id), int(building_id), environment_date)
+        return jsonify({"fluorescent": fluorescents})
+    except ValueError as e:
+        return jsonify({"error": str(e)})
+
+
+@app.route('/args/get_environment_co2Concentration', methods=['GET'])
+def get_environment_co2Concentration():
+    farm_id = request.args.get('farm_id')
+    building_id = request.args.get('building_id')
+    environment_date = request.args.get('environment_date')
+
+    try:
+        co2Concentration = get_Co2Concentration(data, int(farm_id), int(building_id), environment_date)
+        return jsonify({"Co2 Concentration": co2Concentration})
+    except ValueError as e:
+        return jsonify({"error": str(e)})
+
+
+@app.route('/args/get_environment_irrigation', methods=['GET'])
+def get_environment_irrigation():
+    farm_id = request.args.get('farm_id')
+    building_id = request.args.get('building_id')
+    environment_date = request.args.get('environment_date')
+
+    try:
+        irrigation = get_Irrigation(data, int(farm_id), int(building_id), environment_date)
+        return jsonify({"irrigation": irrigation})
+    except ValueError as e:
+        return jsonify({"error": str(e)})
+
+
+#
+# get_event.py relate
+#
+@app.route('/args/get_event_text', methods=['GET'])
+def get_event_text():
+    farm_id = request.args.get('farm_id')
+    building_id = request.args.get('building_id')
+    event_date = request.args.get('event_date')
+
+    try:
+        event_text = get_eventText(data, int(farm_id), int(building_id), event_date)
+        return jsonify({"event_text": event_text})
+    except ValueError as e:
+        return jsonify({"error": str(e)})
+
+
+#
+# get_plot.py relate
+#
+@app.route('/args/get_plot_name', methods=['GET'])
+def get_plot_name():
+    farm_id = request.args.get('farm_id')
+    building_id = request.args.get('building_id')
+    plot_id = request.args.get('plot_id')
+
+    try:
+        plot_name = get_plotName(data, int(farm_id), int(building_id), int(plot_id))
+        return jsonify({"event_text": plot_name})
+    except ValueError as e:
+        return jsonify({"error": str(e)})
+
+
+@app.route('/args/get_plot_area', methods=['GET'])
+def get_plot_area():
+    farm_id = request.args.get('farm_id')
+    building_id = request.args.get('building_id')
+    plot_id = request.args.get('plot_id')
+    plot_date = request.args.get('plot_date')
+
+    try:
+        plot_area = get_plotArea(data, int(farm_id), int(building_id), int(plot_id), plot_date)
+        return jsonify({"event_text": plot_area})
+    except ValueError as e:
+        return jsonify({"error": str(e)})
+
+
+@app.route('/args/get_plot_fruitlets', methods=['GET'])
+def get_plot_fruitlets():
+    farm_id = request.args.get('farm_id')
+    building_id = request.args.get('building_id')
+    plot_id = request.args.get('plot_id')
+    plot_date = request.args.get('plot_date')
+
+    try:
+        plot_fruitlets = get_plotFruitlets(data, int(farm_id), int(building_id), int(plot_id), plot_date)
+        return jsonify({"event_text": plot_fruitlets})
+    except ValueError as e:
+        return jsonify({"error": str(e)})
+
+
+@app.route('/args/get_plot_height', methods=['GET'])
+def get_plot_height():
+    farm_id = request.args.get('farm_id')
+    building_id = request.args.get('building_id')
+    plot_id = request.args.get('plot_id')
+    plot_date = request.args.get('plot_date')
+
+    try:
+        plot_height = get_plotHeight(data, int(farm_id), int(building_id), int(plot_id), plot_date)
+        return jsonify({"event_text": plot_height})
+    except ValueError as e:
+        return jsonify({"error": str(e)})
+
+
+@app.route('/args/get_plot_leaves', methods=['GET'])
+def get_plot_leaves():
+    farm_id = request.args.get('farm_id')
+    building_id = request.args.get('building_id')
+    plot_id = request.args.get('plot_id')
+    plot_date = request.args.get('plot_date')
+
+    try:
+        plot_leaves = get_plotLeaves(data, int(farm_id), int(building_id), int(plot_id), plot_date)
+        return jsonify({"event_text": plot_leaves})
+    except ValueError as e:
+        return jsonify({"error": str(e)})
+
+
+@app.route('/args/get_plot_volume', methods=['GET'])
+def get_plot_volume():
+    farm_id = request.args.get('farm_id')
+    building_id = request.args.get('building_id')
+    plot_id = request.args.get('plot_id')
+    plot_date = request.args.get('plot_date')
+
+    try:
+        plot_volume = get_plotVolume(data, int(farm_id), int(building_id), int(plot_id), plot_date)
+        return jsonify({"event_text": plot_volume})
+    except ValueError as e:
+        return jsonify({"error": str(e)})
+
+
+@app.route('/args/get_plot_width', methods=['GET'])
+def get_plot_width():
+    farm_id = request.args.get('farm_id')
+    building_id = request.args.get('building_id')
+    plot_id = request.args.get('plot_id')
+    plot_date = request.args.get('plot_date')
+
+    try:
+        plot_width = get_plotWidth(data, int(farm_id), int(building_id), int(plot_id), plot_date)
+        return jsonify({"event_text": plot_width})
+    except ValueError as e:
+        return jsonify({"error": str(e)})
+
 
 if __name__ == '__main__':
     app.run(debug=True)
