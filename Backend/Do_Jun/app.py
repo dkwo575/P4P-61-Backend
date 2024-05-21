@@ -1,5 +1,5 @@
 import json
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, send_file, send_from_directory
 from flask_restful import Resource, Api, reqparse
 from flask_mysqldb import MySQL
 from flask_sqlalchemy import SQLAlchemy
@@ -72,6 +72,7 @@ ma = Marshmallow(app)
 mysql = MySQL(app)
 api = Api(app)
 
+IMAGE_FOLDER = r'D:\UOA2\2024Sem1\COMPSYS 700\Test\takeimage\server'
 
 # Create a model
 class environments(db.Model):
@@ -123,7 +124,22 @@ def get_data_by_date(datetime):
     datas = environments.query.filter_by(date=datetime).all()
     return jsonify(datas)
 
+@app.route('/images', methods=['GET'])
+def get_folder():
+    images = os.listdir(IMAGE_FOLDER)
+    print(f"Image list: {images}")
+    return jsonify(images)
 
+
+@app.route('/image/<filename>', methods=['GET'])
+def get_image(filename):
+    print(f"Requested image: {filename}")
+    return send_from_directory(IMAGE_FOLDER, filename)
+
+#
+# @app.route('/api/image', methods=['GET'])
+# def get_image():
+#     return send_file('D:\\UOA2\\2024Sem1\\COMPSYS 700\\Test\\takeimage\\server\\1_color.png', mimetype='image/png')
 
 # @app.route('/api/data', methods=['POST'])
 # def useradd():
