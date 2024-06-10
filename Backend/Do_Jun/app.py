@@ -7,6 +7,8 @@ from Routers import Api, resource
 from flask_cors import CORS
 import os
 import datetime
+import re
+
 
 from flask_cors import CORS
 # from flask_mysqldb import MySQL
@@ -73,10 +75,11 @@ mysql = MySQL(app)
 api = Api(app)
 
 IMAGE_FOLDER = r'D:\UOA2\2024Sem1\COMPSYS 700\Test\takeimage\server'
+RESULT_IMAGE = r'D:\UOA2\2024Sem1\COMPSYS 700\p4p\main\Project 22_ Plant monitoring system for Smart Farm_\Compendium Andy\mmdetection\resultImage'
 
 # Create a model
 class environments(db.Model):
-    __tablename__ = 'environments'
+    __tablename__ = 'real_iot'
     id = db.Column(db.Integer, primary_key=True)
     temperature = db.Column(db.Float(100))
     humidity = db.Column(db.Float(100))
@@ -85,6 +88,8 @@ class environments(db.Model):
     soilHumidity = db.Column(db.Float(100))
     steam = db.Column(db.Float(100))
     datetime = db.Column(db.DateTime, default=datetime.datetime.now)
+
+
 
     def __init__(self, temperature, humidity, light, waterLevel, soilHumidity, steam, datetime):
         self.temperature = temperature
@@ -124,6 +129,41 @@ def get_data_by_date(datetime):
     datas = environments.query.filter_by(date=datetime).all()
     return jsonify(datas)
 
+def convert_json_keys(json_str, quote_type="'"):
+    # Replace double quotes with single quotes for keys
+    def replace_func(match):
+        return f"{quote_type}{match.group(1)}{quote_type}:"
+
+    return re.sub(r'"(\w+)":', replace_func, json_str)
+
+@app.route('/save_json', methods=['GET'])
+def save_json():
+    datas = environments.query.all()
+    result = environments_schema.dump(datas)
+    # convert datas as list of dictionary
+    data_dict = [dict(row) for row in result]
+
+    # convert to json
+    data_json = json.dumps(data_dict, default=str)
+
+    # Convert JSON keys to single quotes or remove quotes
+    ts_content = convert_json_keys(data_json)
+
+    # Generate TypeScript file content
+    ts_content = f"export default iotData = {ts_content};"
+
+    #save local drive
+    with open('data.json', 'w') as json_file:
+        json_file.write(data_json)
+
+    with open('data_dict.txt', 'w') as dict_file:
+        dict_file.write(str(data_dict))
+
+    with open('iotData.ts', 'w') as ts_file:
+        ts_file.write(ts_content)
+
+    return jsonify({"message": "TS Data saved successfully"}), 200
+
 @app.route('/images', methods=['GET'])
 def get_folder():
     images = os.listdir(IMAGE_FOLDER)
@@ -136,6 +176,17 @@ def get_image(filename):
     print(f"Requested image: {filename}")
     return send_from_directory(IMAGE_FOLDER, filename)
 
+# @app.route('/result', methods=['GET'])
+# def get_folder():
+#     images = os.listdir(RESULT_IMAGE)
+#     print(f"Image list: {images}")
+#     return jsonify(images)
+#
+#
+# @app.route('/result2/<filename>', methods=['GET'])
+# def get_image(filename):
+#     print(f"Requested image: {filename}")
+#     return send_from_directory(RESULT_IMAGE, filename)
 #
 # @app.route('/api/image', methods=['GET'])
 # def get_image():
