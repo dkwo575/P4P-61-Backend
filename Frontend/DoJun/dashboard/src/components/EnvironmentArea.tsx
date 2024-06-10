@@ -16,8 +16,8 @@ function EnvironmentArea(props: EnvironmentAreaProps) {
 
   const icons = {
     temperature: 'device_thermostat',
-    fluorescents: 'fluorescent',
-    co2Concentration: 'blur_on',
+    light: 'fluorescent',
+    co2Concentration: 'wifi_add',
     irrigation: 'humidity_high',
   };
 
@@ -70,12 +70,12 @@ function EnvironmentArea(props: EnvironmentAreaProps) {
       <Row>
         <Col>
           <Title level={4} style={{ marginTop: 20 }}>
-            Environment
+            Environment(IoT sensor)
           </Title>
         </Col>
       </Row>
       <Row gutter={[8, 8]}>
-        <Col span={12}>
+        <Col span={8}>
           <EnvironmentStatisticsCard
             icon='device_thermostat'
             text='Tempurature'
@@ -86,29 +86,40 @@ function EnvironmentArea(props: EnvironmentAreaProps) {
             }
           />
         </Col>
-        <Col span={12}>
+        <Col span={8}>
           <EnvironmentStatisticsCard
             icon='fluorescent'
-            text='Fluorescents'
-            value={<>{currentEnvironmentData?.fluorescents ?? 0} fc</>}
+            text='Light'
+            value={<>{currentEnvironmentData?.fluorescents ?? 0} </>}
           />
         </Col>
-        <Col span={12}>
+        <Col span={8}>
           <EnvironmentStatisticsCard
-            icon='blur_on'
-            text='CO2 Conc.'
-            value={<>{currentEnvironmentData?.co2Concentration ?? 0} ppm</>}
+            icon='humidity_percentage'
+            text='Humidity.'
+            value={<>{currentEnvironmentData?.co2Concentration ?? 0} %</>}
           />
         </Col>
-        <Col span={12}>
+        <Col span={8}>
           <EnvironmentStatisticsCard
-            icon='humidity_high'
-            text='Irrigation'
-            value={
-              <>
-                {currentEnvironmentData?.irrigation ?? 0} m<sup>3</sup>/s
-              </>
-            }
+            icon='water_full'
+            text='WaterLevel'
+            value={<>{currentEnvironmentData?.irrigation ?? 0} %</>}
+          />
+        </Col>
+
+        <Col span={8}>
+          <EnvironmentStatisticsCard
+            icon='water'
+            text='SoilHumidity'
+            value={<>{currentEnvironmentData?.irrigation ?? 0} %</>}
+          />
+        </Col>
+        <Col span={8}>
+          <EnvironmentStatisticsCard
+            icon='rainy'
+            text='Steam'
+            value={<>{currentEnvironmentData?.irrigation ?? 0} %</>}
           />
         </Col>
       </Row>
