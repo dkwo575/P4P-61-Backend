@@ -12,6 +12,14 @@ SERVER_FOLDER = 'server'
 if not os.path.exists(SERVER_FOLDER):
     os.makedirs(SERVER_FOLDER)
 
+SERVER_ORIGINAL_FOLDER = 'server/Original'
+if not os.path.exists(SERVER_ORIGINAL_FOLDER):
+    os.makedirs(SERVER_ORIGINAL_FOLDER)
+
+SERVER_RESULT_FOLDER = 'server/Result'
+if not os.path.exists(SERVER_RESULT_FOLDER):
+    os.makedirs(SERVER_RESULT_FOLDER)
+
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
@@ -26,7 +34,12 @@ def upload_file():
 
     if file:
         filename = secure_filename(file.filename)
-        file_path = os.path.join(SERVER_FOLDER, filename)
+        if client_id == 'realsense_client':
+            file_path = os.path.join(SERVER_ORIGINAL_FOLDER, filename)
+        elif client_id == 'ai_client':
+            file_path = os.path.join(SERVER_RESULT_FOLDER, filename)
+        else:
+            file_path = os.path.join(SERVER_FOLDER, filename)
         file.save(file_path)
         file_type = filename.split('.')[-1].upper()  # Extract file type
 
@@ -41,7 +54,14 @@ def upload_file():
 
 @app.route('/download/<filename>', methods=['GET'])
 def download_file(filename):
-    return send_file(os.path.join(SERVER_FOLDER, filename))
+    # Traverse the server folder to find the file
+    for root, dirs, files in os.walk(SERVER_FOLDER):
+        if filename in files:
+            file_path = os.path.join(root, filename)
+            return send_file(file_path)
+
+    # Return an error if the file is not found
+    return jsonify({'error': 'File not found'})
 
 
 @socketio.on('connect')

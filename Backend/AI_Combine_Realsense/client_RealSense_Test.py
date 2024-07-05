@@ -77,8 +77,8 @@ def subscribe_to_updates(url):
 
 
 if __name__ == '__main__':
-    upload_url = 'http://172.23.147.193:5000/upload'
-    subscribe_url = 'ws://172.23.147.193:5000/socket.io/'  # WebSocket URL
+    upload_url = 'http://172.23.128.74:5000/upload'
+    subscribe_url = 'ws://172.23.128.74:5000/socket.io/'  # WebSocket URL
 
     # Run the subscription in a separate thread
     subscription_thread = threading.Thread(target=subscribe_to_updates, args=(subscribe_url,))
