@@ -13,6 +13,7 @@ import '@fontsource/plus-jakarta-sans';
 import 'react-material-symbols/dist/outlined.css';
 import { randomiseData } from './mock-data-generation/dataRandomiser';
 import ImagePage from './pages/ImagePage';
+import CapturePage from './pages/CapturePage';
 
 const router = createBrowserRouter([
   {
@@ -47,6 +48,10 @@ const router = createBrowserRouter([
             path: '/image',
             element: <ImagePage />,
           },
+          // {
+          //   path: '/capture',
+          //   element: <CapturePage />,  sample for add path and element
+          // },
         ],
       },
     ],

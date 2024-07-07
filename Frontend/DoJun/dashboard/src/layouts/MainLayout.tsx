@@ -39,6 +39,10 @@ function MainLayout() {
       label: 'Image data',
       key: 'image',
     },
+    // {
+    //   label: 'Capture Image',
+    //   key: 'capture',
+    // },
   ];
 
   const onMenuClick: MenuProps['onClick'] = (e) => {
@@ -48,6 +52,8 @@ function MainLayout() {
       navigate('/iot');
     } else if (e.key === 'image') {
       navigate('/image');
+      // } else if (e.key === 'capture') {
+      //   navigate('/capture');
     } else {
       navigate(`/building/${e.key}`);
     }
