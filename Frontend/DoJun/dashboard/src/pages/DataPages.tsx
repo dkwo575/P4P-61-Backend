@@ -31,6 +31,10 @@ export default function DataPages() {
     filterAndSortData();
   }, [startDate, endDate, sortField, sortOrder]);
 
+  useEffect(() => {
+    convertTots();
+  }, []);
+
   // useEffect(() => {
   //   handleFilter();
   // }, [FilteringCriteria, iot]);
@@ -52,6 +56,12 @@ export default function DataPages() {
       .catch((error) => {
         console.log(error);
       });
+  }
+
+  function convertTots() {
+    axios.get('http://localhost:5000/save_json').then((response) => {
+      console.log(response.data);
+    });
   }
 
   function filterAndSortData() {
@@ -121,7 +131,13 @@ export default function DataPages() {
   // }
 
   return (
-    <div style={{ height: 'calc(100vh - 120px)', overflow: 'auto' }}>
+    <div
+      style={{
+        height: 'calc(100vh - 120px)',
+        overflow: 'auto',
+        background: theme.palette.pumpkin1,
+      }}
+    >
       <div className='container h-100'>
         <div className='row h-100'>
           <div className='col-12'>
@@ -153,6 +169,8 @@ export default function DataPages() {
                 <option value='asc'>Ascending</option>
                 <option value='desc'>Descending</option>
               </select>
+
+              <button onClick={convertTots}>Convert to ts</button>
             </div>
 
             <table className='table table-bordered table-striped'>

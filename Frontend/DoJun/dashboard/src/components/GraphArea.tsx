@@ -17,6 +17,7 @@ import { chunk, groupBy, isEqual, range } from 'lodash-es';
 import { Data, Event } from '../data';
 import EventCard from './EventCard';
 import mixpanel from 'mixpanel-browser';
+import axios from 'axios';
 
 interface GraphAreaProps {
   data: Data[];
