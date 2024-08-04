@@ -15,6 +15,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from werkzeug.utils import secure_filename
 from mmdet.apis import init_detector, inference_detector
+import socket
 
 # Initialize Flask app and extensions
 app = Flask(__name__)
@@ -43,6 +44,23 @@ SAVE_DIRECTORY = SERVER_RESULT_FOLDER
 config_file = 'configs/mask_rcnn/mask_rcnn_r50_fpn_1x_coco.py'
 checkpoint_file = 'models/laboro_tomato_big_48ep.pth'
 model = init_detector(config_file, checkpoint_file, device='cpu')
+
+
+# Get the local IP address
+def get_local_ip():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        s.connect(('10.254.254.254', 1))
+        local_ip = s.getsockname()[0]
+    except Exception:
+        local_ip = '127.0.0.1'
+    finally:
+        s.close()
+    return local_ip
+
+
+local_ip = get_local_ip()
+server_address = f"http://{local_ip}:5000"
 
 
 # Database model and schema
@@ -112,20 +130,24 @@ def upload_file():
     if file.filename == '':
         return jsonify({'error': 'No selected file'})
 
-    filename = secure_filename(file.filename)
-    if client_id == 'realsense_client':
-        file_path = os.path.join(SERVER_ORIGINAL_FOLDER, filename)
-    elif client_id == 'ai_client':
-        file_path = os.path.join(SERVER_RESULT_FOLDER, filename)
+    if file:
+        filename = secure_filename(file.filename)
+        if client_id == 'realsense_client':
+            file_path = os.path.join(SERVER_ORIGINAL_FOLDER, filename)
+        elif client_id == 'ai_client':
+            file_path = os.path.join(SERVER_RESULT_FOLDER, filename)
+        else:
+            file_path = os.path.join(SERVER_FOLDER, filename)
+        file.save(file_path)
+        file_type = filename.split('.')[-1].upper()
+
+        print(f"Uploaded file: {filename}, Type: {file_type}, Client: {client_id}")
+
+        notify_clients('File uploaded', filename, file_type, client_id)
+
+        return jsonify({'message': 'File uploaded successfully', 'file_type': file_type, 'client_id': client_id})
     else:
-        file_path = os.path.join(SERVER_FOLDER, filename)
-    file.save(file_path)
-    file_type = filename.split('.')[-1].upper()
-
-    print(f"Uploaded file: {filename}, Type: {file_type}, Client: {client_id}")
-
-    notify_clients('File uploaded', filename, file_type, client_id)
-    return jsonify({'message': 'File uploaded successfully', 'file_type': file_type, 'client_id': client_id})
+        return jsonify({'error': 'Upload failed'})
 
 
 @app.route('/download/<filename>', methods=['GET'])
@@ -165,45 +187,33 @@ def video_feed():
 
 
 @app.route('/api/process', methods=['GET'])
-def process_endpoint():
+def send_files_to_ai():
     try:
-        results = process_images()
-        return jsonify({"message": "Processing completed", "results": results}), 200
+        # Get all image and depth files.
+        image_files = [f for f in os.listdir(SERVER_ORIGINAL_FOLDER) if f.endswith('.png')]
+        depth_files = [f for f in os.listdir(SERVER_ORIGINAL_FOLDER) if f.endswith('.npy')]
+
+        if len(image_files) != len(depth_files):
+            return jsonify({"message": "Mismatch in number of image and depth files"}), 400
+
+        # Emit each file to the AI client
+        for image_file, depth_file in zip(image_files, depth_files):
+            image_file_path = os.path.join(SERVER_ORIGINAL_FOLDER, image_file)
+            depth_file_path = os.path.join(SERVER_ORIGINAL_FOLDER, depth_file)
+
+            # Create download URLs for the files
+            image_download_url = f"{server_address}/download/{image_file}"
+            depth_download_url = f"{server_address}/download/{depth_file}"
+            print(image_download_url)
+            print(depth_download_url)
+
+            # Emit the URLs to the AI client
+            file_dumps(image_file, image_download_url, depth_file, depth_download_url)
+
+        return jsonify({"message": "Files sent to AI client successfully"}), 200
+
     except Exception as e:
         return jsonify({"message": "An error occurred", "error": str(e)}), 500
-
-
-def process_images():
-    image_files = [f for f in os.listdir(IMAGE_DIRECTORY) if f.endswith('.png')]
-    depth_files = [f for f in os.listdir(IMAGE_DIRECTORY) if f.endswith('.npy')]
-    assert len(image_files) == len(depth_files), "Mismatch in number of image and depth files"
-    results = []
-
-    for i in range(len(image_files)):
-        image_path = os.path.join(IMAGE_DIRECTORY, image_files[i])
-        depth_path = os.path.join(IMAGE_DIRECTORY, depth_files[i])
-        img = mmcv.imread(image_path)
-        depth_data = np.load(depth_path)
-        result = inference_detector(model, img)
-        bbox_result, segm_result = result
-        labels = [np.full(bbox.shape[0], i, dtype=np.int32) for i, bbox in enumerate(bbox_result)]
-        labels = np.concatenate(labels)
-        bboxes = np.vstack(bbox_result)
-        segment = np.vstack(segm_result) if segm_result else np.array([])
-
-        out_file = os.path.join(SAVE_DIRECTORY, f'result_{i + 1}.png')
-        model.show_result(img, result, out_file=out_file)
-
-        results.append({
-            'image': image_files[i],
-            'depth': depth_files[i],
-            'bboxes': bboxes.tolist(),
-            'labels': labels.tolist(),
-            'segment': segment.tolist() if segment.size > 0 else [],
-            'result_image': f'result_{i + 1}.png'
-        })
-
-    return results
 
 
 def gen_frames():
@@ -220,7 +230,7 @@ def get_frame():
         aligned_frames = align.process(frames)
         aligned_depth_frame = aligned_frames.get_depth_frame()
         color_frame = aligned_frames.get_color_frame()
-        if not aligned_depth_frame or not color_frame:
+        if not aligned_depth_frame or color_frame:
             continue
         depth_image = np.asanyarray(aligned_depth_frame.get_data())
         color_image = np.asanyarray(color_frame.get_data())
@@ -232,7 +242,6 @@ def get_frame():
 
 
 def notify_clients(event, filename, file_type, client_id):
-    server_address = request.host_url.rstrip('/')
     download_url = f"{server_address}/download/{filename}"
     socketio.emit('update', {
         'event': event,
@@ -243,6 +252,17 @@ def notify_clients(event, filename, file_type, client_id):
     })
     print(
         f"Notification sent to all clients: {event} - {filename} - Download URL: {download_url} - Client ID: {client_id}")
+
+
+def file_dumps(image_file, image_download_url, depth_file, depth_download_url):
+    socketio.emit('send_file_to_ai', {
+        'image_file': image_file,
+        'image_download_url': image_download_url,
+        'depth_file': depth_file,
+        'depth_download_url': depth_download_url
+    })
+    print(
+        f"Notification sent to all AI clients: Image_file: {image_file} - Depth_file: {depth_file}")
 
 
 @socketio.on('connect')

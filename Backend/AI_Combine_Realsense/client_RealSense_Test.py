@@ -77,26 +77,34 @@ def subscribe_to_updates(url):
 
 
 if __name__ == '__main__':
-    upload_url = 'http://172.23.128.74:5000/upload'
-    subscribe_url = 'ws://172.23.128.74:5000/socket.io/'  # WebSocket URL
+    upload_url = 'http://130.216.238.175:5000/upload'
+    subscribe_url = 'http://130.216.238.175:5000'  # WebSocket URL
 
     # Run the subscription in a separate thread
     subscription_thread = threading.Thread(target=subscribe_to_updates, args=(subscribe_url,))
     subscription_thread.start()
 
     # Test upload with client ID
-    upload_file(upload_url, os.path.join(CLIENT_FOLDER, '20240530_114523_color.png'))
-    upload_file(upload_url, os.path.join(CLIENT_FOLDER, '20240530_114523_depthData.npy'))
+    files_to_upload = [
+        '20240530_114523_color.png',
+        '20240530_114523_depthData.npy',
+        '20240530_114527_color.png',
+        '20240530_114527_depthData.npy',
+        '20240530_123336_color.png',
+        '20240530_123336_depthData.npy',
+        '20240530_123339_color.png',
+        '20240530_123339_depthData.npy',
+        '20240530_123339_color.png',
+        '20240530_123339_depthData.npy',
+        '20240530_123346_color.png',
+        '20240530_123346_depthData.npy',
+        '20240530_124122_color.png',
+        '20240530_124122_depthData.npy',
+        '20240530_124127_color.png',
+        '20240530_124127_depthData.npy',
+        '20240530_124134_color.png',
+        '20240530_124134_depthData.npy'
+    ]
 
-    upload_file(upload_url, os.path.join(CLIENT_FOLDER, '20240530_114527_color.png'))
-    upload_file(upload_url, os.path.join(CLIENT_FOLDER, '20240530_114527_depthData.npy'))
-
-    upload_file(upload_url, os.path.join(CLIENT_FOLDER, '20240530_124122_color.png'))
-    upload_file(upload_url, os.path.join(CLIENT_FOLDER, '20240530_124122_depthData.npy'))
-
-    upload_file(upload_url, os.path.join(CLIENT_FOLDER, '20240530_124134_color.png'))
-    upload_file(upload_url, os.path.join(CLIENT_FOLDER, '20240530_124134_depthData.npy'))
-
-    upload_file(upload_url, os.path.join(CLIENT_FOLDER, '20240530_123346_color.png'))
-    upload_file(upload_url, os.path.join(CLIENT_FOLDER, '20240530_123346_depthData.npy'))
-
+    for file_name in files_to_upload:
+        upload_file(upload_url, os.path.join(CLIENT_FOLDER, file_name))

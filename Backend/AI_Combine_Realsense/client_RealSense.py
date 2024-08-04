@@ -2,12 +2,12 @@ import requests
 import os
 import socketio
 import threading
-from time import *
+from time import sleep
 import pyrealsense2 as rs
 import numpy as np
 import cv2 as cv
 import uuid
-from datetime import *
+from datetime import datetime
 
 CLIENT_FOLDER = 'client_realsense'
 if not os.path.exists(CLIENT_FOLDER):
@@ -74,13 +74,23 @@ def on_update(data):
 
 
 def subscribe_to_updates(url):
-    sio = socketio.Client()
+    sio = socketio.Client(
+        reconnection=True,
+        reconnection_attempts=5,
+        reconnection_delay=1,
+        reconnection_delay_max=5
+    )
     sio.on('connect', on_connect)
     sio.on('disconnect', on_disconnect)
     sio.on('update', on_update)
 
-    sio.connect(url)
-    sio.wait()
+    try:
+        sio.connect(url)
+        sio.wait()
+    except socketio.exceptions.ConnectionError as e:
+        print(f"Connection failed: {e}")
+        sleep(5)  # Wait for 5 seconds before attempting to reconnect
+        subscribe_to_updates(url)  # Recursive call to retry connection
 
 
 # Realsense Take Picture
@@ -88,7 +98,7 @@ def subscribe_to_updates(url):
 def findDevices():
     ctx = rs.context()  # Create librealsense context for managing devices
     serials = []
-    if (len(ctx.devices) > 0):
+    if len(ctx.devices) > 0:
         for dev in ctx.devices:
             print('Found device: ', \
                   dev.get_info(rs.camera_info.name), ' ', \
@@ -192,22 +202,12 @@ def pipelineStop(pipelines):
 
 
 if __name__ == '__main__':
-    upload_url = 'http://172.23.147.193:5000/upload'
-    subscribe_url = 'ws://172.23.147.193:5000/socket.io/'  # WebSocket URL
+    upload_url = 'http://130.216.238.175:5000/upload'
+    subscribe_url = 'http://130.216.238.175:5000'  # WebSocket URL
 
     # Run the subscription in a separate thread
     subscription_thread = threading.Thread(target=subscribe_to_updates, args=(subscribe_url,))
     subscription_thread.start()
-
-    # # Test upload with client ID
-    # upload_file(upload_url, os.path.join(CLIENT_FOLDER, '1_color.png'))
-    # upload_file(upload_url, os.path.join(CLIENT_FOLDER, '1_depthData.npy'))
-    # upload_file(upload_url, os.path.join(CLIENT_FOLDER, '2_color.png'))
-    # upload_file(upload_url, os.path.join(CLIENT_FOLDER, '2_depthData.npy'))
-    # upload_file(upload_url, os.path.join(CLIENT_FOLDER, '3_color.png'))
-    # upload_file(upload_url, os.path.join(CLIENT_FOLDER, '3_depthData.npy'))
-    # upload_file(upload_url, os.path.join(CLIENT_FOLDER, '4_color.png'))
-    # upload_file(upload_url, os.path.join(CLIENT_FOLDER, '4_depthData.npy'))
 
     # Combine Realsense Take Image Code:
     serials, ctx = findDevices()
@@ -220,11 +220,10 @@ if __name__ == '__main__':
 
     pipelines = enableDevices(serials, ctx, resolution_width, resolution_height, frame_rate)
 
-
     try:
         while True:
             exit_program = Visualize(pipelines, upload_url)
-            if exit_program == True:
+            if exit_program:
                 print('Program closing...')
                 break
 
