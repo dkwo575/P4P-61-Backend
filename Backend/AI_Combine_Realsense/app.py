@@ -14,7 +14,7 @@ from flask_socketio import SocketIO, emit
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from werkzeug.utils import secure_filename
-from mmdet.apis import init_detector, inference_detector
+# from mmdet.apis import init_detector, inference_detector
 import socket
 
 # Initialize Flask app and extensions
@@ -23,7 +23,8 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 # Database configuration
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://DoJunKwon:smartfarm@localhost:3306/sensor_db'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://DoJunKwon:smartfarm@172.23.123.199:3306/sensor_db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:741852963Zuo@localhost:3306/sensor_db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
@@ -40,10 +41,10 @@ os.makedirs(SERVER_RESULT_FOLDER, exist_ok=True)
 IMAGE_DIRECTORY = SERVER_ORIGINAL_FOLDER
 SAVE_DIRECTORY = SERVER_RESULT_FOLDER
 
-# Object detection model configuration
-config_file = 'configs/mask_rcnn/mask_rcnn_r50_fpn_1x_coco.py'
-checkpoint_file = 'models/laboro_tomato_big_48ep.pth'
-model = init_detector(config_file, checkpoint_file, device='cpu')
+# # Object detection model configuration
+# config_file = 'configs/mask_rcnn/mask_rcnn_r50_fpn_1x_coco.py'
+# checkpoint_file = 'models/laboro_tomato_big_48ep.pth'
+# model = init_detector(config_file, checkpoint_file, device='cpu')
 
 
 # Get the local IP address
@@ -277,4 +278,4 @@ def handle_disconnect():
 
 
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', port=5000, debug=True)
+    socketio.run(app, host='0.0.0.0', port=5000, debug=True, allow_unsafe_werkzeug=True)
