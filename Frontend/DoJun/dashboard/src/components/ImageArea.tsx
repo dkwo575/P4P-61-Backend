@@ -25,9 +25,9 @@ export default function ImagePage() {
     getResultImage();
   }, []);
 
-  useEffect(() => {
-    runAIModel();
-  }, []);
+  // useEffect(() => {
+  //   runAIModel();
+  // }, []);
 
   function getImageData() {
     axios
