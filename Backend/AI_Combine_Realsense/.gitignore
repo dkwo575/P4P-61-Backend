@@ -14,10 +14,6 @@ models
 configs
 *.local
 
-*.png
-*.npy
-
-
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
