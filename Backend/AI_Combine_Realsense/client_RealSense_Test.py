@@ -15,18 +15,21 @@ if not os.path.exists(CLIENT_DOWNLOAD_FOLDER):
 # Define a unique client ID
 CLIENT_ID = 'realsense_client'
 
+# Define the name for the client, so it will be easy for store files
+CLIENT_NAME = 'camera_laptop'
+
 
 def upload_file(url, filename):
     try:
         with open(filename, 'rb') as file:
             files = {'file': file}
-            data = {'client_id': CLIENT_ID}  # Include client ID in form data
+            data = {'client_id': CLIENT_ID, 'client_name': CLIENT_NAME}  # Include client ID and client name in form data
             response = requests.post(url, files=files, data=data)
             response.raise_for_status()
             # Parse the response JSON and print it in a formatted manner
             response_data = response.json()
             print(
-                f"Received response: File uploaded by client '{response_data['client_id']}' of type '{response_data['file_type']}': {response_data['message']}")
+                f"Received response: File uploaded by client '{response_data['client_id']}':'{response_data['client_name']}' of type '{response_data['file_type']}': {response_data['message']}")
     except Exception as e:
         print(f"An error occurred: {e}")
 
@@ -53,10 +56,10 @@ def on_disconnect():
 
 def on_update(data):
     print(
-        f"Received event: {data['event']} - {data['filename']} - Download URL: {data['download_url']} - Client ID: {data['client_id']}")
+        f"Received event: {data['event']} - {data['filename']} - Download URL: {data['download_url']} - Client ID: {data['client_id']} - Client Name: {data['client_name']}")
 
     # Check if the file was uploaded by the realsense client itself
-    if data['client_id'] == CLIENT_ID:
+    if data['client_name'] == CLIENT_NAME:
         print(f"Skipping file uploaded by the realsense client itself: {data['filename']}")
         return
 
@@ -77,8 +80,8 @@ def subscribe_to_updates(url):
 
 
 if __name__ == '__main__':
-    upload_url = 'http://127.0.0.1:5000/upload'
-    subscribe_url = 'http://127.0.0.1:5000'  # WebSocket URL
+    upload_url = 'http://130.216.238.175:5000/upload'
+    subscribe_url = 'http://130.216.238.175:5000'  # WebSocket URL
 
     # Run the subscription in a separate thread
     subscription_thread = threading.Thread(target=subscribe_to_updates, args=(subscribe_url,))

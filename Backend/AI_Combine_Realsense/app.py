@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 import json
 import re
@@ -14,7 +15,6 @@ from flask_socketio import SocketIO, emit
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from werkzeug.utils import secure_filename
-# from mmdet.apis import init_detector, inference_detector
 import socket
 
 # Initialize Flask app and extensions
@@ -23,7 +23,6 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 # Database configuration
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://DoJunKwon:smartfarm@172.23.123.199:3306/sensor_db'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:741852963Zuo@localhost:3306/sensor_db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
@@ -40,12 +39,6 @@ os.makedirs(SERVER_RESULT_FOLDER, exist_ok=True)
 # Image directories for processing
 IMAGE_DIRECTORY = SERVER_ORIGINAL_FOLDER
 SAVE_DIRECTORY = SERVER_RESULT_FOLDER
-
-
-# # Object detection model configuration
-# config_file = 'configs/mask_rcnn/mask_rcnn_r50_fpn_1x_coco.py'
-# checkpoint_file = 'models/laboro_tomato_big_48ep.pth'
-# model = init_detector(config_file, checkpoint_file, device='cpu')
 
 
 # Get the local IP address
@@ -127,30 +120,42 @@ def upload_file():
         return jsonify({'error': 'No file part'})
 
     file = request.files['file']
-    client_id = request.form.get('client_id', 'unknown')  # Extract client_id from form data
+    client_id = request.form.get('client_id', 'unknown')
+    client_name = request.form.get('client_name', 'unknown')
 
     if file.filename == '':
         return jsonify({'error': 'No selected file'})
 
     if file:
+        # Sanitize the filename
         filename = secure_filename(file.filename)
+
+        # Determine the correct folder based on client_id and client_name
         if client_id == 'realsense_client':
-            file_path = os.path.join(SERVER_ORIGINAL_FOLDER, filename)
+            client_folder = os.path.join(SERVER_ORIGINAL_FOLDER, client_id, client_name)
         elif client_id == 'ai_client':
-            file_path = os.path.join(SERVER_RESULT_FOLDER, filename)
+            client_folder = os.path.join(SERVER_RESULT_FOLDER, client_id, client_name)
         else:
-            file_path = os.path.join(SERVER_FOLDER, filename)
+            client_folder = os.path.join(SERVER_FOLDER, client_id, client_name)
+
+        # Create the client-specific subfolder
+        os.makedirs(client_folder, exist_ok=True)
+
+        # Save the file in the respective subfolder
+        file_path = os.path.join(client_folder, filename)
         file.save(file_path)
-        file_type = filename.split('.')[-1].upper()  # Extract file type
 
-        print(f"Uploaded file: {filename}, Type: {file_type}, Client: {client_id}")
+        file_type = filename.split('.')[-1].upper()
 
-        notify_clients('File uploaded', filename, file_type, client_id)
+        print(f"Uploaded file: {filename}, Type: {file_type}, Client: {client_id}, Client Name: {client_name}")
 
-        return jsonify({'message': 'File uploaded successfully', 'file_type': file_type, 'client_id': client_id})
+        # Notify connected clients (if using WebSocket)
+        notify_clients('File uploaded', filename, file_type, client_id, client_name)
+
+        return jsonify({'message': 'File uploaded successfully', 'file_type': file_type, 'client_id': client_id,
+                        'client_name': client_name})
     else:
         return jsonify({'error': 'Upload failed'})
-
 
 
 @app.route('/download/<filename>', methods=['GET'])
@@ -164,24 +169,41 @@ def download_file(filename):
 
 @app.route('/images', methods=['GET'])
 def get_folder():
-    images = os.listdir(IMAGE_DIRECTORY)
+    images = get_all_files(IMAGE_DIRECTORY)
     return jsonify(images)
 
 
-@app.route('/image/<filename>', methods=['GET'])
-def get_image(filename):
-    return send_from_directory(IMAGE_DIRECTORY, filename)
+# @app.route('/image/<filename>', methods=['GET'])
+# def get_image(filename):
+#     return send_from_directory(IMAGE_DIRECTORY, filename)
+
+@app.route('/image/<path:subpath>', methods=['GET'])
+def get_image(subpath):
+    # Construct the full file path
+    file_path = os.path.join(IMAGE_DIRECTORY, subpath)
+    if os.path.exists(file_path):
+        return send_file(file_path)
+    else:
+        return jsonify({'error': 'File not found'}), 404
 
 
 @app.route('/result', methods=['GET'])
 def get_folder2():
-    images = os.listdir(SAVE_DIRECTORY)
+    images = get_all_files(SAVE_DIRECTORY)
     return jsonify(images)
 
 
-@app.route('/result2/<filename>', methods=['GET'])
-def get_image2(filename):
-    return send_from_directory(SAVE_DIRECTORY, filename)
+# @app.route('/result2/<filename>', methods=['GET'])
+# def get_image2(filename):
+#     return send_from_directory(SAVE_DIRECTORY, filename)
+@app.route('/result2/<path:subpath>', methods=['GET'])
+def get_image2(subpath):
+    # Construct the full file path
+    file_path = os.path.join(SAVE_DIRECTORY, subpath)
+    if os.path.exists(file_path):
+        return send_file(file_path)
+    else:
+        return jsonify({'error': 'File not found'}), 404
 
 
 @app.route('/video_feed')
@@ -192,30 +214,31 @@ def video_feed():
 @app.route('/api/process', methods=['GET'])
 def send_files_to_ai():
     try:
-        # Get all image and depth files.
-        image_files = [f for f in os.listdir(SERVER_ORIGINAL_FOLDER) if f.endswith('.png')]
-        depth_files = [f for f in os.listdir(SERVER_ORIGINAL_FOLDER) if f.endswith('.npy')]
+        # Get all image and depth files
+        image_files = [f for f in get_all_files(SERVER_ORIGINAL_FOLDER) if f.endswith('.png')]
+        depth_files = [f for f in get_all_files(SERVER_ORIGINAL_FOLDER) if f.endswith('.npy')]
 
         # Log the number of files found
         print(f"Found {len(image_files)} image files and {len(depth_files)} depth files")
 
-        # if len(image_files) != len(depth_files):
-        #     print("Mismatch in number of image and depth files")
-        #     return jsonify({"message": "Mismatch in number of image and depth files"}), 400
+        # Check if there is a mismatch between images and depth files
+        if len(image_files) != len(depth_files):
+            raise ValueError("Mismatch between number of image files and depth files")
 
         # Emit each file to the AI client
         for image_file, depth_file in zip(image_files, depth_files):
-            image_file_path = os.path.join(SERVER_ORIGINAL_FOLDER, image_file)
-            depth_file_path = os.path.join(SERVER_ORIGINAL_FOLDER, depth_file)
+            # Extract filenames from paths
+            image_filename = os.path.basename(image_file)
+            depth_filename = os.path.basename(depth_file)
 
             # Create download URLs for the files
-            image_download_url = f"{server_address}/download/{image_file}"
-            depth_download_url = f"{server_address}/download/{depth_file}"
+            image_download_url = f"{server_address}/download/{image_filename}"
+            depth_download_url = f"{server_address}/download/{depth_filename}"
             print(f"Image download URL: {image_download_url}")
             print(f"Depth download URL: {depth_download_url}")
 
             # Emit the URLs to the AI client
-            file_dumps(image_file, image_download_url, depth_file, depth_download_url)
+            file_dumps(image_filename, image_download_url, depth_filename, depth_download_url)
 
         return jsonify({"message": "Files sent to AI client successfully"}), 200
 
@@ -263,7 +286,6 @@ def notify_clients(event, filename, file_type, client_id, client_name):
         f"Notification sent to all clients: {event} - {filename} - Download URL: {download_url} - Client ID: {client_id} - Client Name: {client_name}")
 
 
-
 def file_dumps(image_file, image_download_url, depth_file, depth_download_url):
     socketio.emit('send_file_to_ai', {
         'image_file': image_file,
@@ -284,6 +306,52 @@ def handle_connect():
 @socketio.on('disconnect')
 def handle_disconnect():
     print("Client disconnected")
+
+
+# Helper function to get all files in a directory and its subdirectories
+def get_all_files(directory):
+    files = []
+    for root, dirs, filenames in os.walk(directory):
+        for filename in filenames:
+            files.append(os.path.relpath(os.path.join(root, filename), directory))
+    return files
+
+
+# Endpoint to list all subfolders within a specified directory (Original or Result)
+@app.route('/api/subfolders', methods=['GET'])
+def get_subfolders():
+    folder_type = request.args.get('folder', 'Original')
+    base_path = os.path.join('server', folder_type)
+
+    print(f"Base path: {base_path}")  # Debugging line
+
+    if not os.path.exists(base_path):
+        return jsonify({'error': f"The folder '{folder_type}' does not exist."}), 404
+
+    subfolders = [f for f in os.listdir(base_path) if os.path.isdir(os.path.join(base_path, f))]
+
+    print(f"Subfolders found: {subfolders}")  # Debugging line
+
+    return jsonify(subfolders)
+
+
+# Endpoint to list all files within a specified subfolder
+@app.route('/api/files', methods=['GET'])
+def get_files():
+    global IMAGE_DIRECTORY, SAVE_DIRECTORY
+    folder_type = request.args.get('folder', 'Original')
+    subfolder = request.args.get('subfolder', '')
+
+    base_path = os.path.join('server', folder_type, subfolder)
+    if not os.path.exists(base_path):
+        return jsonify({'error': f"The folder '{folder_type}/{subfolder}' does not exist."}), 404
+
+    files = get_all_files(base_path)
+    if folder_type == "Original":
+        IMAGE_DIRECTORY = base_path
+    elif folder_type == "Result":
+        SAVE_DIRECTORY = base_path
+    return jsonify(files)
 
 
 if __name__ == '__main__':
