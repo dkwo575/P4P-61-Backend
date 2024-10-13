@@ -249,18 +249,19 @@ def get_frame():
     return None
 
 
-def notify_clients(event, filename, file_type, client_id):
-    server_address = request.host_url.rstrip('/')
+def notify_clients(event, filename, file_type, client_id, client_name):
     download_url = f"{server_address}/download/{filename}"
     socketio.emit('update', {
         'event': event,
         'filename': filename,
         'download_url': download_url,
         'file_type': file_type,
-        'client_id': client_id  # Include client_id in the notification
+        'client_id': client_id,
+        'client_name': client_name
     })
     print(
-        f"Notification sent to all clients: {event} - {filename} - Download URL: {download_url} - Client ID: {client_id}")
+        f"Notification sent to all clients: {event} - {filename} - Download URL: {download_url} - Client ID: {client_id} - Client Name: {client_name}")
+
 
 
 def file_dumps(image_file, image_download_url, depth_file, depth_download_url):

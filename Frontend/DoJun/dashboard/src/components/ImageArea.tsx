@@ -1,190 +1,174 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Col, Row, Button, Select, Typography } from 'antd';
+import { Col, Row, Button, Select } from 'antd';
 import theme from '../theme';
 
 const { Option } = Select;
 
 export default function ImagePage() {
-  const [imageSrc, setImageSrc] = useState([]);
-  const [currentImage, setCurrentImage] = useState('');
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [imageSrc, setImageSrc] = useState<string[]>([]);
+  const [currentImage, setCurrentImage] = useState<string>('');
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
 
-  // this show result image
-  const [imageSrc2, setImageSrc2] = useState([]);
-  const [resultImage, setResultImage] = useState('');
-  const [resultIndex, setResultIndex] = useState(0);
+  const [imageSrc2, setImageSrc2] = useState<string[]>([]);
+  const [resultImage, setResultImage] = useState<string>('');
+  const [resultIndex, setResultIndex] = useState<number>(0);
 
-  // const [aiModel, setAiModel] = useState('unet');
+  const [folders, setFolders] = useState<string[]>([]);
+  const [selectedFolder, setSelectedFolder] = useState<string>('');
+  const [resultFolders, setResultFolders] = useState<string[]>([]);
+  const [selectedResultFolder, setSelectedResultFolder] = useState<string>('');
 
   useEffect(() => {
-    getImageData();
+    getFolders();
+    getResultFolders();
   }, []);
 
   useEffect(() => {
-    getResultImage();
-  }, []);
+    if (selectedFolder) getImageData(selectedFolder);
+  }, [selectedFolder]);
 
-  // useEffect(() => {
-  //   runAIModel();
-  // }, []);
+  useEffect(() => {
+    if (selectedResultFolder) getResultImage(selectedResultFolder);
+  }, [selectedResultFolder]);
 
-  function getImageData() {
-    axios
-      .get('http://localhost:5000/images') // , { responseType: 'blob' }
-      .then((response) => {
-        console.log(response.data);
+  function getFolders() {
+    axios.get('http://localhost:5000/api/subfolders?folder=Original')
+      .then(response => {
+        setFolders(response.data);
+        if (response.data.length > 0) {
+          setSelectedFolder(response.data[0]);
+        }
+      })
+      .catch(error => console.log(error));
+  }
+
+  function getResultFolders() {
+    axios.get('http://localhost:5000/api/subfolders?folder=Result')
+      .then(response => {
+        setResultFolders(response.data);
+        if (response.data.length > 0) {
+          setSelectedResultFolder(response.data[0]);
+        }
+      })
+      .catch(error => console.log(error));
+  }
+
+  function getImageData(folder: string) {
+    axios.get(`http://localhost:5000/api/files?folder=Original&subfolder=${folder}`)
+      .then(response => {
         setImageSrc(response.data);
         if (response.data.length > 0) {
           setCurrentImage(response.data[0]);
-          //   setCurrentIndex(0);
+          setCurrentIndex(0);
         }
       })
-      .catch((error) => {
-        console.log(error);
-      });
+      .catch(error => console.log(error));
   }
 
-  function getResultImage() {
-    axios
-      .get('http://localhost:5000/result')
-      .then((response) => {
-        console.log(response.data);
+  function getResultImage(folder: string) {
+    axios.get(`http://localhost:5000/api/files?folder=Result&subfolder=${folder}`)
+      .then(response => {
         setImageSrc2(response.data);
         if (response.data.length > 0) {
           setResultImage(response.data[0]);
-          //   setCurrentIndex(0);
+          setResultIndex(0);
         }
       })
-      .catch((error) => {
-        console.log(error);
-      });
+      .catch(error => console.log(error));
   }
 
   function runAIModel() {
-    axios
-      .get('http://localhost:5000/api/process')
-      .then((response) => {
-        console.log(response.data);
-        // setAiModel(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    axios.get('http://localhost:5000/api/process')
+      .then(response => console.log(response.data))
+      .catch(error => console.log(error));
   }
 
-  // function getResultImage() {
-  //   axios.get()
-
   const nextImage = () => {
-    const newIndex = currentIndex + 1;
-    setCurrentIndex(newIndex);
-    setCurrentImage(imageSrc[newIndex]);
+    if (currentIndex < imageSrc.length - 1) {
+      const newIndex = currentIndex + 1;
+      setCurrentIndex(newIndex);
+      setCurrentImage(imageSrc[newIndex]);
+    }
   };
 
   const prevImage = () => {
-    const newIndex = currentIndex - 1;
-    setCurrentIndex(newIndex);
-    setCurrentImage(imageSrc[newIndex]);
-  };
-
-  const handleImageChange = (event) => {
-    const changingImage = event.target.value; // files[0]
-    const newIndex = imageSrc.indexOf(changingImage);
-    setCurrentIndex(newIndex);
-    setCurrentImage(changingImage);
+    if (currentIndex > 0) {
+      const newIndex = currentIndex - 1;
+      setCurrentIndex(newIndex);
+      setCurrentImage(imageSrc[newIndex]);
+    }
   };
 
   const nextResultImage = () => {
-    const newIndex = resultIndex + 1;
-    setResultIndex(newIndex);
-    setResultImage(imageSrc2[newIndex]);
+    if (resultIndex < imageSrc2.length - 1) {
+      const newIndex = resultIndex + 1;
+      setResultIndex(newIndex);
+      setResultImage(imageSrc2[newIndex]);
+    }
   };
 
   const prevResultImage = () => {
-    const newIndex = resultIndex - 1;
-    setResultIndex(newIndex);
-    setResultImage(imageSrc2[newIndex]);
+    if (resultIndex > 0) {
+      const newIndex = resultIndex - 1;
+      setResultIndex(newIndex);
+      setResultImage(imageSrc2[newIndex]);
+    }
   };
-
-  const handleResultChange = (event) => {
-    const changingImage = event.target.value; // files[0]
-    const newIndex = imageSrc2.indexOf(changingImage);
-    setResultIndex(newIndex);
-    setResultImage(changingImage);
-  };
-
-  //   const deleteImage = () => {
-  //     axios
-  //       .delete('http://localhost:5000/image')
-  //       .then((response) => {
-  //         console.log(response.data);
-  //         setImageSrc([]);
-  //         setCurrentImage(0);
-  //         setCurrentIndex(0);
-  //       })
-  //       .catch((error) => {
-  //         console.log(error);
-  //       });
-  //   }
 
   return (
-    <>
-      <Row gutter={24}>
-        <Col span={24}>
-          <div
-            style={{
-              height: 'calc(100vh - 120px)',
-              overflow: 'auto',
-              background: theme.palette.bole1,
-            }}
-          >
-            <div style={{ width: '50%', float: 'left', position: 'relative' }}>
-              <div>
-                <Button onClick={prevImage}>Previous</Button>
-                <Button onClick={nextImage}>Next</Button>
-                <select onChange={handleImageChange} value={currentImage}>
-                  {imageSrc.map((image) => (
-                    <option key={image} value={image}>
-                      {image}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div style={{ width: '50%', float: 'left', position: 'relative' }}>
-                {currentImage && (
-                  <img
-                    src={`http://localhost:5000/image/${currentImage}`}
-                    alt='Current Image'
-                    width='600'
-                  />
-                )}
-              </div>
-            </div>
-            <div style={{ width: '50%', float: 'right', position: 'relative' }}>
-              <div>
-                <Button onClick={prevResultImage}>Previous</Button>
-                <Button onClick={nextResultImage}>Next</Button>
-                <select onChange={handleResultChange} value={resultImage}>
-                  {imageSrc2.map((image) => (
-                    <option key={image} value={image}>
-                      {image}
-                    </option>
-                  ))}
-                </select>
-                <Button onClick={runAIModel}>Run AI Model</Button>
-              </div>
-              <div>
-                <img
-                  src={`http://localhost:5000/result2/${resultImage}`}
-                  alt='Result Image'
-                  width='600'
-                />
-              </div>
-            </div>
+    <Row gutter={24}>
+      <Col span={12}>
+        <div style={{ height: 'calc(100vh - 120px)', overflow: 'auto', background: theme.palette.bole1 }}>
+          <div>
+            <Select value={selectedFolder} onChange={setSelectedFolder} style={{ width: '100%' }}>
+              {folders.map(folder => (
+                <Option key={folder} value={folder}>
+                  {folder}
+                </Option>
+              ))}
+            </Select>
+            <Button onClick={prevImage}>Previous</Button>
+            <Button onClick={nextImage}>Next</Button>
+            <select onChange={e => setCurrentImage(e.target.value)} value={currentImage}>
+              {imageSrc.map(image => (
+                <option key={image} value={image}>
+                  {image}
+                </option>
+              ))}
+            </select>
           </div>
-        </Col>
-      </Row>
-    </>
+          {currentImage && (
+            <img src={`http://localhost:5000/image/${currentImage}`} alt='Current Image' width='600' />
+          )}
+        </div>
+      </Col>
+      <Col span={12}>
+        <div style={{ height: 'calc(100vh - 120px)', overflow: 'auto', background: theme.palette.bole1 }}>
+          <div>
+            <Select value={selectedResultFolder} onChange={setSelectedResultFolder} style={{ width: '100%' }}>
+              {resultFolders.map(folder => (
+                <Option key={folder} value={folder}>
+                  {folder}
+                </Option>
+              ))}
+            </Select>
+            <Button onClick={prevResultImage}>Previous</Button>
+            <Button onClick={nextResultImage}>Next</Button>
+            <select onChange={e => setResultImage(e.target.value)} value={resultImage}>
+              {imageSrc2.map(image => (
+                <option key={image} value={image}>
+                  {image}
+                </option>
+              ))}
+            </select>
+            <Button onClick={runAIModel}>Run AI Model</Button>
+          </div>
+          {resultImage && (
+            <img src={`http://localhost:5000/result2/${resultImage}`} alt='Result Image' width='600' />
+          )}
+        </div>
+      </Col>
+    </Row>
   );
 }
