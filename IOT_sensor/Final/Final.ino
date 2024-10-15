@@ -29,8 +29,8 @@
 dht11 DHT11;
 // LiquidCrystal_I2C lcd(0x27,16,2);
 
-const char* ssid = "AndroidHotspot_Jun"; //"kimzuo"; //"AndroidHotspot_Jun"; // Enter wifi name
-const char* password = "smartfarm";  //"741852963Zuo"; //"smartfarm"; // Enter wifi password
+const char* ssid = "AndroidHotspot_Jun";  //"AndroidHotspot_Jun"; // Enter wifi name
+const char* password = "smartfarm";   //"smartfarm"; // Enter wifi password
 
 String HOST_NAME = "http://192.168.226.33"; // REPLACE WITH YOUR PC's IP ADDRESS //172.20.15.202 //172.23.122.1
 String PHP_FILE_NAME = "/iot_sensor_project/insert_data.php"; // Replace with your php file name
